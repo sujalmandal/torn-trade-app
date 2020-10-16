@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiKeyInputComponent from './components/ApiKeyInputComponent'
+import InitialiserComponent from './components/InitialiserComponent'
 import ReceivedItemsComponent from './components/ReceivedItemsComponent'
 import SentItemsComponent from './components/SentItemsComponent'
 import BalanceDetailComponent from './components/BalanceDetailComponent'
@@ -9,7 +9,7 @@ function App() {
   return (
     <Container>
       <Row>
-        <Col><ApiKeyInputComponent/></Col>
+        <Col><InitialiserComponent/></Col>
       </Row>
       <Row>
         <Col><ReceivedItemsComponent/></Col>
