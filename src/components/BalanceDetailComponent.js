@@ -3,39 +3,39 @@ import { Button } from "reactstrap"
 import { Container, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 
-class BalanceDetailComponent extends Component{
-    constructor(props){
+class BalanceDetailComponent extends Component {
+    constructor(props) {
         super(props);
-        this.state={
-            balance:0
+        this.state = {
+            balance: 0
         }
     }
 
-    render(){
-      let btnColor;
-      
-        if(this.props.itemsStore===null || !this.props.itemsStore){
-          btnColor="secondary";
+    render() {
+        let btnColor;
+
+        if (this.props.itemsStore === null || !this.props.itemsStore) {
+            btnColor = "secondary";
         }
-        else{
-          btnColor="primary";
+        else {
+            btnColor = "primary";
         }
-        return(
+        return (
             <Container>
                 <Row>
                     <Col>
-                    {(() => {
-                        if(this.state.balance>0)
-                            return <h5 style={{color:"green"}}>You are owed {this.state.balance} $</h5>;
-                        if(this.state.balance<0)
-                            return <h5 style={{color:"red"}}>You owe {this.state.balance} $</h5>;
-                        if(this.state.balance===0){
-                            return <h5 style={{color:"green"}}>The trade is balanced</h5>;
-                        }
-                    })()}
+                        {(() => {
+                            if (this.state.balance > 0)
+                                return <h5 style={{ color: "green" }}>You are owed {this.state.balance} $</h5>;
+                            if (this.state.balance < 0)
+                                return <h5 style={{ color: "red" }}>You owe {this.state.balance} $</h5>;
+                            if (this.state.balance === 0) {
+                                return <h5 style={{ color: "green" }}>The trade is balanced</h5>;
+                            }
+                        })()}
                     </Col>
                     <Row>
-                        <Col><Button color={btnColor} disabled={this.props.itemNameList===null} >Copy to Clipboard</Button></Col>
+                        <Col><Button color={btnColor} disabled={this.props.itemNameList === null} >Copy to Clipboard</Button></Col>
                     </Row>
                 </Row>
             </Container>
@@ -49,12 +49,12 @@ const mapStateToProps = state => {
     return {
         ...state
     };
-  };
-  
-  const mapDispatchToProps = dispatch => {
+};
+
+const mapDispatchToProps = dispatch => {
     return {
-        
+
     }
-  };
-  
-  export default connect(mapStateToProps, mapDispatchToProps)(BalanceDetailComponent);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BalanceDetailComponent);

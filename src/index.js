@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import App from './App';
+import { IdGenerator } from './utils/IdGenerator'
 import * as serviceWorker from './serviceWorker';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
@@ -10,8 +11,9 @@ import { logger } from 'redux-logger'
 
 const mainReducer = function (
   state = {
-    receivedItems:[],
-    sentItems:[],
+    apiKey: localStorage.getItem("API_KEY"),
+    receivedItems:[{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
+    sentItems:[{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
     balance:"",
     time:new Date(),
     loading:false,
@@ -22,17 +24,14 @@ const mainReducer = function (
   }, action) {
   switch (action.type) {
     case "UPDATE_RECEIVED_ITEMS":
-      console.log("received items updated!");
-      console.log(JSON.stringify(action.payload));
       return {
         ...state,
+        receivedItems:action.payload.receivedItems,
         time:new Date(),
         apiCallSuccess:undefined,
         loading:false
       };
     case "UPDATE_SENT_ITEMS":
-      console.log("sent items updated!");
-      console.log(JSON.stringify(action.payload));
       return  {
         ...state,
         time:new Date(),

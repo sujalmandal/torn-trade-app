@@ -5,6 +5,7 @@ import { Container, Row, Col } from 'reactstrap';
 import { Table } from 'reactstrap';
 import { Button, ButtonGroup } from 'reactstrap';
 import { IdGenerator } from '../utils/IdGenerator'
+import { fetchPrice } from '../actions/marketPriceFetchAction'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { connect } from 'react-redux';
@@ -14,7 +15,7 @@ class ReceivedItemsComponent extends Component {
         super(props);
         this.state = {
             totalPrice: 0,
-            rows: [{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }]
+            rows: this.props.receivedItems
         }
     }
 
@@ -27,7 +28,7 @@ class ReceivedItemsComponent extends Component {
             tPrice: 0
         })
         this.forceUpdate();
-        this.props.handleReceivedItemsUpdated(this.state.rows);
+        //this.props.handleReceivedItemsUpdated(this.state.rows);
     }
 
     removeRow = (currentRow) => {
@@ -35,10 +36,10 @@ class ReceivedItemsComponent extends Component {
             return row.id !== currentRow.id;
         });
         this.forceUpdate();
-        this.props.handleReceivedItemsUpdated(this.state.rows);
+        //this.props.handleReceivedItemsUpdated(this.state.rows);
     }
 
-    updateValue = (event) => {
+    updateQty = (event) => {
         var fieldName = event.target.name.split("_")[0];
         var rowId = event.target.name.split("_")[1];
         var value = event.target.value;
@@ -48,17 +49,25 @@ class ReceivedItemsComponent extends Component {
             }
         });
         this.forceUpdate();
-        this.props.handleReceivedItemsUpdated(this.state.rows);
+        //this.props.handleReceivedItemsUpdated(this.state.rows);
     }
 
     updateTypeAheadSelectedName = (selectedItemName, rowId) => {
+        var itemName=selectedItemName[0];
         this.state.rows.forEach((row) => {
             if (row.id === rowId) {
-                row["name"] = selectedItemName;
+                row.name = itemName;
             }
         });
         this.forceUpdate();
-        this.props.handleReceivedItemsUpdated(this.state.rows);
+        this.props.handleReceivedItemsUpdated(
+            this.props.apiKey,
+            itemName,
+            this.props.itemsStore,
+            this.state.rows,
+            rowId,
+            true
+        );
     }
 
     render() {
@@ -83,16 +92,16 @@ class ReceivedItemsComponent extends Component {
                                 return (
                                     <tr key={row.id}>
                                         <td>
-                                            <Typeahead id={"name_" + row.id} maxResults="5" disabled={this.props.itemNameList===null} onChange={(selected) => { this.updateTypeAheadSelectedName(selected, row.id) }} options={this.props.itemNameList} />
+                                            <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { this.updateTypeAheadSelectedName(selected, row.id) }} options={this.props.itemNameList} />
                                         </td>
-                                        <td><Input type="number" disabled={this.props.itemNameList===null} name={"qty_" + row.id} value={row.qty} onChange={this.updateValue} /></td>
+                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={this.updateQty} /></td>
                                         <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
                                         <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
                                         <td>
                                             <div>
                                                 <ButtonGroup>
-                                                    <Button color="success" disabled={this.props.itemNameList===null} onClick={() => { this.addRow() }}>+</Button>
-                                                    <Button color="danger" disabled={this.props.itemNameList===null} onClick={() => { this.removeRow(row) }}>-</Button>
+                                                    <Button color="success" disabled={this.props.itemNameList === null} onClick={() => { this.addRow() }}>+</Button>
+                                                    <Button color="danger" disabled={this.props.itemNameList === null} onClick={() => { this.removeRow(row) }}>-</Button>
                                                 </ButtonGroup>
                                             </div>
                                         </td>
@@ -113,14 +122,32 @@ class ReceivedItemsComponent extends Component {
 
 /* mapping for redux */
 const mapStateToProps = state => {
+    console.log("ReceivedItemsComponent props update triggered!");
     return {
-        itemNameList: state.itemNameList
+        apiKey: state.apiKey,
+        itemNameList: state.itemNameList,
+        receivedItems: state.receivedItems,
+        itemsStore: state.itemsStore
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        handleReceivedItemsUpdated: (receivedList) => dispatch({ type: 'UPDATE_RECEIVED_ITEMS', payload: { "receivedItems": receivedList } })
+        handleReceivedItemsUpdated: (apiKey, itemName, itemsStore, receivedList, rowId, requiresPriceCheck) => {
+            if (requiresPriceCheck) {
+                dispatch(fetchPrice(
+                    apiKey,
+                    itemName,
+                    itemsStore,
+                    receivedList,
+                    rowId,
+                    { type: 'UPDATE_RECEIVED_ITEMS', payload: { "receivedItems": receivedList } }
+                ));
+            }
+            else {
+                dispatch({ type: 'UPDATE_RECEIVED_ITEMS', payload: { "receivedItems": receivedList } });
+            }
+        }
     }
 };
 

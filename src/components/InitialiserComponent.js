@@ -10,14 +10,13 @@ class InitialiserComponent extends Component{
     constructor(props) {
         super(props)
         this.state = {
-         apiKey : localStorage.getItem("API_KEY")===null ? "" : localStorage.getItem("API_KEY"),
-         itemsStore : null
+         apiKey : props.apiKey,
+         itemsStore : props.itemsStore
        }
     }
 
     updateApiKey=(event)=>{
         this.setState({apiKey : event.target.value})
-        localStorage.setItem("API_KEY",event.target.value);
     }
 
     saveApiKeyAndInit=()=>{
@@ -33,12 +32,12 @@ class InitialiserComponent extends Component{
     render() {
       let btnName;
       let btnColor;
-      if(this.props.loading){
+      if(this.state.loading){
         btnName="loading...";
         btnColor="info";
       }
       else{
-        if(this.props.itemsStore===null || !this.props.itemsStore){
+        if(this.state.itemsStore===null || !this.state.itemsStore){
           btnName="Initialise";
           btnColor="primary";
         }
@@ -73,6 +72,7 @@ class InitialiserComponent extends Component{
 const mapStateToProps = state => {
   console.log("InitialiserComponent props update triggered!");
   return {
+      apiKey: state.apiKey,
       loading: state.loading,
       apiCallSuccess: state.apiCallSuccess,
       apiErrorMsg: state.apiErrorMsg,
