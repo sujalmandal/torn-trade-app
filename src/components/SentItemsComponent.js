@@ -28,7 +28,7 @@ class SentItemsComponent extends Component{
             tPrice:0
         })
         this.forceUpdate();
-        this.props.handleSentItemsUpdated();
+        this.props.handleSentItemsUpdated(this.state.rows);
     }
 
     removeRow=(currentRow)=>{
@@ -36,7 +36,7 @@ class SentItemsComponent extends Component{
             return row.id!==currentRow.id;
         });
         this.forceUpdate();
-        this.props.handleSentItemsUpdated();
+        this.props.handleSentItemsUpdated(this.state.rows);
     }
 
     updateValue=(event)=>{
@@ -49,7 +49,7 @@ class SentItemsComponent extends Component{
             }
         });
         this.forceUpdate();
-        this.props.handleSentItemsUpdated();
+        this.props.handleSentItemsUpdated(this.state.rows);
     }
 
     updateTypeAheadSelectedName=(selectedItemName,rowId)=>{
@@ -59,7 +59,7 @@ class SentItemsComponent extends Component{
             }
         });
         this.forceUpdate();
-        this.props.handleSentItemsUpdated();
+        this.props.handleSentItemsUpdated(this.state.rows);
     }
 
     render(){
@@ -120,7 +120,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        handleSentItemsUpdated: () => dispatch({type: 'UPDATE_SENT_ITEMS',payload: {"sentItems":this.state.rows}})
+        handleSentItemsUpdated: (sentList) => dispatch({type: 'UPDATE_SENT_ITEMS',payload: {"sentItems":sentList}})
     }
 };
 
