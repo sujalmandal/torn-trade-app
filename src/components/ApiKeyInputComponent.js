@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { Button } from "reactstrap";
 import { Input } from "reactstrap";
 import { Container, Row, Col } from 'reactstrap';
+import { connect } from 'react-redux';
 
 class ApiKeyInputComponent extends Component{
 
     constructor(props) {
         super(props)
         this.state = {
-         API_KEY: ''
+         API_KEY: props.API_KEY
        }
     }
 
@@ -17,7 +18,7 @@ class ApiKeyInputComponent extends Component{
     }
 
     saveApiKey=()=>{
-        alert(this.state.API_KEY)
+        this.props.handleUpdateApiKey(this.state.API_KEY);
     }
 
     render() {
@@ -43,4 +44,18 @@ class ApiKeyInputComponent extends Component{
     }
 }
 
-export default ApiKeyInputComponent;
+
+/* mapping for redux */
+const mapStateToProps = state => {
+  return {
+      API_KEY: state.apiKey
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+      handleUpdateApiKey: (apiKey) => dispatch({ type: 'UPDATE_API_KEY', payload: { "API_KEY": apiKey } })
+  }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ApiKeyInputComponent);

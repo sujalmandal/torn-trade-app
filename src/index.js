@@ -6,11 +6,13 @@ import * as serviceWorker from './serviceWorker';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 
-const countReducer = function (state = {
+const mainReducer = function (state = {
     receivedItems:[],
     sentItems:[],
     balance:"",
-    time:new Date()
+    time:new Date(),
+    apiKey: localStorage.getItem("API_KEY"),
+    marketItems:localStorage.getItem("MARKET_ITEMS")
   }, action) {
   switch (action.type) {
     case "UPDATE_RECEIVED_ITEMS":
@@ -21,12 +23,18 @@ const countReducer = function (state = {
       console.log("sent items updated!");
       console.log(JSON.stringify(action.payload));
       return state;
+    case "UPDATE_API_KEY":
+      console.log("api key updated!");
+      console.log(JSON.stringify(action.payload));
+      localStorage.setItem("API_KEY",action.payload.API_KEY);
+      state.apiKey=action.payload.API_KEY;
+      return state;
     default:
       return state;
   }
 };
 
-let store = createStore(countReducer);
+let store = createStore(mainReducer);
 
 const ReactApp = () => (
   <Provider store={store}>
