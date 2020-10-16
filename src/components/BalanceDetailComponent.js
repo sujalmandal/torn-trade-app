@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { Button } from "reactstrap"
 import { Container, Row, Col } from 'reactstrap';
+import { connect } from 'react-redux';
 
 class BalanceDetailComponent extends Component{
     constructor(props){
@@ -11,6 +12,14 @@ class BalanceDetailComponent extends Component{
     }
 
     render(){
+      let btnColor;
+      
+        if(this.props.itemsStore===null || !this.props.itemsStore){
+          btnColor="secondary";
+        }
+        else{
+          btnColor="primary";
+        }
         return(
             <Container>
                 <Row>
@@ -26,7 +35,7 @@ class BalanceDetailComponent extends Component{
                     })()}
                     </Col>
                     <Row>
-                        <Col><Button color="primary">Copy to Clipboard</Button></Col>
+                        <Col><Button color={btnColor} disabled={this.props.itemNameList===null} >Copy to Clipboard</Button></Col>
                     </Row>
                 </Row>
             </Container>
@@ -34,4 +43,18 @@ class BalanceDetailComponent extends Component{
     }
 }
 
-export default BalanceDetailComponent;
+/* mapping for redux */
+const mapStateToProps = state => {
+    console.log("BalanceDetailComponent props update triggered!");
+    return {
+        ...state
+    };
+  };
+  
+  const mapDispatchToProps = dispatch => {
+    return {
+        
+    }
+  };
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(BalanceDetailComponent);

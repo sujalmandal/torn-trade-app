@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
+import { logger } from 'redux-logger'
 
 const mainReducer = function (
   state = {
@@ -15,55 +16,59 @@ const mainReducer = function (
     time:new Date(),
     loading:false,
     apiErrorMsg:"",
-    apiCallSuccess:undefined
+    apiCallSuccess:undefined,
+    itemsStore:JSON.parse(localStorage.getItem("MARKET_ITEMS")),
+    itemNameList:JSON.parse(localStorage.getItem("MARKET_ITEMS_SIMPLE"))
   }, action) {
   switch (action.type) {
     case "UPDATE_RECEIVED_ITEMS":
       console.log("received items updated!");
       console.log(JSON.stringify(action.payload));
       return {
+        ...state,
         time:new Date(),
         apiCallSuccess:undefined,
-        loading:false,
-        ...state
+        loading:false
       };
     case "UPDATE_SENT_ITEMS":
       console.log("sent items updated!");
       console.log(JSON.stringify(action.payload));
       return  {
+        ...state,
         time:new Date(),
         apiCallSuccess:undefined,
-        loading:false,
-        ...state
+        loading:false
       };
     case "MARKET_ITEMS_FETCH_STARTED":
       return  {
+        ...state,
         time:new Date(),
         loading:action.payload.loading,
-        apiCallSuccess:undefined,
-        ...state
+        apiCallSuccess:undefined
       };
     case "MARKET_ITEMS_FETCH_SUCCESS":
       return {
+        ...state,
         time:new Date(),
         loading:action.payload.loading,
-        apiCallSuccess:true,
-        ...state
+        itemsStore:action.payload.itemsStore,
+        itemNameList:action.payload.itemNameList,
+        apiCallSuccess:true
       };
     case "MARKET_ITEMS_FETCH_FAILED":
       return {
+        ...state,
         time:new Date(),
         loading:action.payload.loading,
         apiCallSuccess:false,
-        apiErrorMsg:action.payload.error,
-        ...state
+        apiErrorMsg:action.payload.error
       };
     default:
       return state;
   }
 };
 
-let store = createStore(mainReducer,applyMiddleware(thunk));
+let store = createStore(mainReducer,applyMiddleware(thunk,logger));
 
 const ReactApp = () => (
   <Provider store={store}>

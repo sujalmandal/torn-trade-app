@@ -14,8 +14,7 @@ class ReceivedItemsComponent extends Component {
         super(props);
         this.state = {
             totalPrice: 0,
-            rows: [{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
-            itemNames: []
+            rows: [{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }]
         }
     }
 
@@ -84,16 +83,16 @@ class ReceivedItemsComponent extends Component {
                                 return (
                                     <tr key={row.id}>
                                         <td>
-                                            <Typeahead id={"name_" + row.id} onChange={(selected) => { this.updateTypeAheadSelectedName(selected, row.id) }} options={this.state.itemNames} />
+                                            <Typeahead id={"name_" + row.id} maxResults="5" disabled={this.props.itemNameList===null} onChange={(selected) => { this.updateTypeAheadSelectedName(selected, row.id) }} options={this.props.itemNameList} />
                                         </td>
-                                        <td><Input type="number" name={"qty_" + row.id} value={row.qty} onChange={this.updateValue} /></td>
+                                        <td><Input type="number" disabled={this.props.itemNameList===null} name={"qty_" + row.id} value={row.qty} onChange={this.updateValue} /></td>
                                         <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
                                         <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
                                         <td>
                                             <div>
                                                 <ButtonGroup>
-                                                    <Button color="success" onClick={() => { this.addRow() }}>+</Button>
-                                                    <Button color="danger" onClick={() => { this.removeRow(row) }}>-</Button>
+                                                    <Button color="success" disabled={this.props.itemNameList===null} onClick={() => { this.addRow() }}>+</Button>
+                                                    <Button color="danger" disabled={this.props.itemNameList===null} onClick={() => { this.removeRow(row) }}>-</Button>
                                                 </ButtonGroup>
                                             </div>
                                         </td>
@@ -115,7 +114,7 @@ class ReceivedItemsComponent extends Component {
 /* mapping for redux */
 const mapStateToProps = state => {
     return {
-        count: state
+        itemNameList: state.itemNameList
     };
 };
 

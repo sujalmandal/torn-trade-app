@@ -10,7 +10,8 @@ class InitialiserComponent extends Component{
     constructor(props) {
         super(props)
         this.state = {
-         apiKey: localStorage.getItem("API_KEY")===null? "":localStorage.getItem("API_KEY")
+         apiKey : localStorage.getItem("API_KEY")===null ? "" : localStorage.getItem("API_KEY"),
+         itemsStore : null
        }
     }
 
@@ -30,6 +31,22 @@ class InitialiserComponent extends Component{
     }
 
     render() {
+      let btnName;
+      let btnColor;
+      if(this.props.loading){
+        btnName="loading...";
+        btnColor="info";
+      }
+      else{
+        if(this.props.itemsStore===null || !this.props.itemsStore){
+          btnName="Initialise";
+          btnColor="primary";
+        }
+        else{
+          btnName="Update";
+          btnColor="secondary";
+        }
+      }
         return (
           <Container>
           <Row>
@@ -41,7 +58,7 @@ class InitialiserComponent extends Component{
               <Input type="text" placeholder="Your API KEY goes here.." value={this.state.apiKey} onChange={this.updateApiKey}/>
             </Col>
             <Col>
-              <Button color="primary" onClick={()=>{this.saveApiKeyAndInit()}}>{localStorage.getItem("MARKET_ITEMS")===null?"Initialise":"Update"}</Button>
+              <Button color={btnColor} onClick={()=>{this.saveApiKeyAndInit()}}>{btnName}</Button>
             </Col>
           </Row>
           <Row>
@@ -54,10 +71,12 @@ class InitialiserComponent extends Component{
 
 /* mapping for redux */
 const mapStateToProps = state => {
+  console.log("InitialiserComponent props update triggered!");
   return {
       loading: state.loading,
       apiCallSuccess: state.apiCallSuccess,
-      apiErrorMsg: state.apiErrorMsg
+      apiErrorMsg: state.apiErrorMsg,
+      itemsStore:state.itemsStore
   };
 };
 

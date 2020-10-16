@@ -5,16 +5,19 @@ export const fetchAllItemMetaData = (apiKey) => {
       dispatch(started());
       axios.get("https://api.torn.com/torn/?selections=items&key="+apiKey)
         .then(res => {
-          var itemMetaData={
+          var itemNameList=[];
+          var itemsStore={
             idByName:{},
             nameById:{}
           };
           Object.entries(res.data.items).forEach(([key, value]) => {
-            itemMetaData.idByName[value.name]=parseInt(key);
-            itemMetaData.nameById[parseInt(key)]=value.name;
+            itemsStore.idByName[value.name]=parseInt(key);
+            itemsStore.nameById[parseInt(key)]=value.name;
+            itemNameList.push(value.name);
           });
-          localStorage.setItem("MARKET_ITEMS",JSON.stringify(itemMetaData))
-          dispatch(success());
+          localStorage.setItem("MARKET_ITEMS",JSON.stringify(itemsStore))
+          localStorage.setItem("MARKET_ITEMS_SIMPLE",JSON.stringify(itemNameList))
+          dispatch(success(itemsStore,itemNameList));
         })
         .catch(err => {
           dispatch(failed(err.message));
@@ -22,10 +25,12 @@ export const fetchAllItemMetaData = (apiKey) => {
     };
   };
   
-  const success = items => ({
+  const success = (itemsStore,itemNameList) => ({
     type: "MARKET_ITEMS_FETCH_SUCCESS",
     payload: {
-      loading: false
+      loading: false,
+      itemsStore:{...itemsStore},
+      itemNameList:[...itemNameList]
     }
   });
   
