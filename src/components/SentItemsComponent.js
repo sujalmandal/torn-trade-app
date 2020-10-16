@@ -7,6 +7,7 @@ import { Button, ButtonGroup } from 'reactstrap';
 import {IdGenerator} from '../utils/IdGenerator'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { connect } from 'react-redux';
 
 class SentItemsComponent extends Component{
     constructor(props){
@@ -14,7 +15,7 @@ class SentItemsComponent extends Component{
         this.state={
             totalPrice:0,
             rows:[{id:IdGenerator(),name:"",qty:0,mPrice:0,tPrice:0}],
-            itemNames:["Sujal"]
+            itemNames:[]
         }
     }
 
@@ -27,6 +28,7 @@ class SentItemsComponent extends Component{
             tPrice:0
         })
         this.forceUpdate();
+        this.props.handleSentItemsUpdated();
     }
 
     removeRow=(currentRow)=>{
@@ -34,6 +36,7 @@ class SentItemsComponent extends Component{
             return row.id!==currentRow.id;
         });
         this.forceUpdate();
+        this.props.handleSentItemsUpdated();
     }
 
     updateValue=(event)=>{
@@ -46,6 +49,7 @@ class SentItemsComponent extends Component{
             }
         });
         this.forceUpdate();
+        this.props.handleSentItemsUpdated();
     }
 
     updateTypeAheadSelectedName=(selectedItemName,rowId)=>{
@@ -55,6 +59,7 @@ class SentItemsComponent extends Component{
             }
         });
         this.forceUpdate();
+        this.props.handleSentItemsUpdated();
     }
 
     render(){
@@ -106,4 +111,17 @@ class SentItemsComponent extends Component{
     }
 }
 
-export default SentItemsComponent;
+/* mapping for redux */
+const mapStateToProps = state => {
+    return {
+      count: state
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        handleSentItemsUpdated: () => dispatch({type: 'UPDATE_SENT_ITEMS',payload: {"sentItems":this.state.rows}})
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(SentItemsComponent);

@@ -7,6 +7,7 @@ import { Button, ButtonGroup } from 'reactstrap';
 import {IdGenerator} from '../utils/IdGenerator'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { connect } from 'react-redux';
 
 class ReceivedItemsComponent extends Component{
     constructor(props){
@@ -27,6 +28,7 @@ class ReceivedItemsComponent extends Component{
             tPrice:0
         })
         this.forceUpdate();
+        this.props.handleReceivedItemsUpdated();
     }
 
     removeRow=(currentRow)=>{
@@ -34,6 +36,7 @@ class ReceivedItemsComponent extends Component{
             return row.id!==currentRow.id;
         });
         this.forceUpdate();
+        this.props.handleReceivedItemsUpdated();
     }
 
     updateValue=(event)=>{
@@ -46,6 +49,7 @@ class ReceivedItemsComponent extends Component{
             }
         });
         this.forceUpdate();
+        this.props.handleReceivedItemsUpdated();
     }
 
     updateTypeAheadSelectedName=(selectedItemName,rowId)=>{
@@ -55,6 +59,7 @@ class ReceivedItemsComponent extends Component{
             }
         });
         this.forceUpdate();
+        this.props.handleReceivedItemsUpdated();
     }
 
     render(){
@@ -106,4 +111,17 @@ class ReceivedItemsComponent extends Component{
     }
 }
 
-export default ReceivedItemsComponent;
+/* mapping for redux */
+const mapStateToProps = state => {
+    return {
+      count: state
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+      handleReceivedItemsUpdated: () => dispatch({ type: 'UPDATE_RECEIVED_ITEMS', payload: {"receivedItems":this.state.rows}})
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(ReceivedItemsComponent);
