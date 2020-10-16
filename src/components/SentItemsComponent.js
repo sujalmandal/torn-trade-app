@@ -1,35 +1,60 @@
+/* eslint-disable react/no-direct-mutation-state */
 import React, { Component } from "react"
 import { Input } from "reactstrap"
 import { Container, Row, Col } from 'reactstrap';
 import { Table } from 'reactstrap';
 import { Button, ButtonGroup } from 'reactstrap';
 import {IdGenerator} from '../utils/IdGenerator'
+import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 class SentItemsComponent extends Component{
     constructor(props){
         super(props);
         this.state={
             totalPrice:0,
-            rows:[{id:IdGenerator(),name:"",qty:0,mPrice:0,tPrice:0}]
+            rows:[{id:IdGenerator(),name:"",qty:0,mPrice:0,tPrice:0}],
+            itemNames:["Sujal"]
         }
     }
-    addRow=(row)=>{
+
+    addRow=()=>{
         this.state.rows.push({
             id:IdGenerator(),
-            name:row.name,
-            qty:row.qty,
-            mPrice:row.mPrice,
-            tPrice:row.tPrice
+            name:"",
+            qty:0,
+            mPrice:0,
+            tPrice:0
         })
         this.forceUpdate();
     }
 
-    removeRow=(row)=>{
-        
+    removeRow=(currentRow)=>{
+        this.state.rows=this.state.rows.filter((row)=>{
+            return row.id!==currentRow.id;
+        });
+        this.forceUpdate();
     }
 
     updateValue=(event)=>{
-        console.log(event.target.name+" : "+event.target.value)
+        var fieldName=event.target.name.split("_")[0];
+        var rowId=event.target.name.split("_")[1];
+        var value=event.target.value;
+        this.state.rows.forEach((row)=>{
+            if(row.id===rowId){
+                row[fieldName]=value;
+            }
+        });
+        this.forceUpdate();
+    }
+
+    updateTypeAheadSelectedName=(selectedItemName,rowId)=>{
+        this.state.rows.forEach((row)=>{
+            if(row.id===rowId){
+                row["name"]=selectedItemName;
+            }
+        });
+        this.forceUpdate();
     }
 
     render(){
@@ -53,15 +78,17 @@ class SentItemsComponent extends Component{
                         {this.state.rows.map((row,index)=>{
                            return (
                             <tr key={row.id}>
-                            <td><Input type="text" name={"name_"+row.id} value={row.name} onChange={this.updateValue}/></td>
+                            <td>    
+                            <Typeahead id={"name_"+row.id} onChange={(selected)=>{this.updateTypeAheadSelectedName(selected,row.id)}} options={this.state.itemNames}/>
+                            </td>
                             <td><Input type="number" name={"qty_"+row.id} value={row.qty} onChange={this.updateValue}/></td>
                             <td><Input type="number" name={"mPrice_"+row.id} value={row.mPrice} disabled={true}/></td>
                             <td><Input type="number" name={"tPrice_"+row.id} value={row.tPrice} disabled={true}/></td>
                             <td>
                             <div>
                                 <ButtonGroup>
-                                    <Button color="success" onClick={this.addRow}>+</Button>
-                                    <Button color="danger" onClick={this.removeRow}>-</Button>
+                                    <Button color="success" onClick={()=>{this.addRow()}}>+</Button>
+                                    <Button color="danger" onClick={()=>{this.removeRow(row)}}>-</Button>
                                 </ButtonGroup>
                             </div>
                             </td>
