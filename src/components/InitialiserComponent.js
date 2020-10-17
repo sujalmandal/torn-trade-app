@@ -10,13 +10,13 @@ class InitialiserComponent extends Component{
     constructor(props) {
         super(props)
         this.state = {
-         apiKey : props.apiKey,
-         itemsStore : props.itemsStore
+         apiKey : props.apiKey
        }
     }
 
     updateApiKey=(event)=>{
         this.setState({apiKey : event.target.value})
+        this.props.updateApiKeyInRedux(event.target.value);
     }
 
     saveApiKeyAndInit=()=>{
@@ -32,12 +32,12 @@ class InitialiserComponent extends Component{
     render() {
       let btnName;
       let btnColor;
-      if(this.state.loading){
+      if(this.props.loading){
         btnName="loading...";
         btnColor="info";
       }
       else{
-        if(this.state.itemsStore===null || !this.state.itemsStore){
+        if(this.props.itemsStore===null || !this.props.itemsStore){
           btnName="Initialise";
           btnColor="primary";
         }
@@ -54,7 +54,7 @@ class InitialiserComponent extends Component{
           <Row>
             <Col><h4>Torn barter receipt generator</h4></Col>
             <Col>
-              <Input type="text" placeholder="Your API KEY goes here.." value={this.state.apiKey} onChange={this.updateApiKey}/>
+              <Input type="text" placeholder="Your API KEY goes here.." value={this.props.apiKey===null?"":this.props.apiKey} onChange={this.updateApiKey}/>
             </Col>
             <Col>
               <Button color={btnColor} onClick={()=>{this.saveApiKeyAndInit()}}>{btnName}</Button>
@@ -69,20 +69,23 @@ class InitialiserComponent extends Component{
 }
 
 /* mapping for redux */
-const mapStateToProps = state => {
+const mapStateToProps = (reduxState) => {
   return {
-      apiKey: state.apiKey,
-      loading: state.loading,
-      apiCallSuccess: state.apiCallSuccess,
-      apiErrorMsg: state.apiErrorMsg,
-      itemsStore:state.itemsStore
+      apiKey: reduxState.apiKey,
+      loading: reduxState.loading,
+      apiCallSuccess: reduxState.apiCallSuccess,
+      apiErrorMsg: reduxState.apiErrorMsg,
+      itemsStore: reduxState.itemsStore
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
       fetchMarketItemDetails: function(apiKey){
         dispatch(fetchAllItemMetaData(apiKey))
+      },
+      updateApiKeyInRedux:function(apiKey){
+        dispatch({type:"API_KEY_UPDATED",payload:{apiKey}});
       }
   }
 };

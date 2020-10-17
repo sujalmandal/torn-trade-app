@@ -25,6 +25,11 @@ const mainReducer = function (
     itemNameList:JSON.parse(localStorage.getItem("MARKET_ITEMS_SIMPLE"))
   }, action) {
   switch (action.type) {
+    case "API_KEY_UPDATED":
+      return {
+        ...state,
+        apiKey: action.payload.apiKey
+      };
     case "MARKET_PRICE_FETCHED":
       var updatedPriceMap={...state.priceMap};
       updatedPriceMap[action.payload.itemName]=action.payload.price;
@@ -59,6 +64,7 @@ const mainReducer = function (
       return {
         ...state,
         time:new Date(),
+        priceMap:populateDefaultPriceMap(),
         loading:action.payload.loading,
         itemsStore:action.payload.itemsStore,
         itemNameList:action.payload.itemNameList,
