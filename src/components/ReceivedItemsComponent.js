@@ -6,6 +6,7 @@ import { Table } from 'reactstrap';
 import { Button, ButtonGroup } from 'reactstrap';
 import { IdGenerator } from '../utils/IdGenerator'
 import { fetchPrice } from '../actions/marketPriceFetchAction'
+import { getUpdatedRowData,getTotalPrice } from '../utils/PriceCalculator'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { connect } from 'react-redux';
@@ -59,8 +60,38 @@ class ReceivedItemsComponent extends Component {
                 row.name = itemName;
             }
         });
+        //dispatch a api call to fetch prices in the priceMap in reduxStore
         this.props.fetchItemPrice(this.props.apiKey,itemName,this.props.itemsStore);
         this.forceUpdate();
+    }
+
+    //find out if any kind of calculation is required
+    calculationRequired=(rows)=>{
+        var calculationRequired=false;
+        rows.forEach((row)=>{
+            //user has selected the name & the api has fetched the value but the state variable mPrice is not updated
+            if(row.name!=="" && this.props.priceMap[row.name]!==row.mPrice){
+                calculationRequired = true;
+                return;
+            }
+            //if everything is updated but the stateVariable tPrice is not updated
+            if(row.name!=="" && this.props.priceMap[row.name]===row.mPrice 
+                && row.qty!==0 && row.tPrice!==(parseInt(row.mPrice) * parseInt(row.qty))){
+                calculationRequired = true;
+                return;
+            }
+        });
+        return calculationRequired;
+    }
+
+    //update the market price in the array after API has fetched the price in the priceMap
+    componentDidUpdate(prevProps,prevState) {
+        if(this.calculationRequired(prevState.rows)){
+            this.setState({
+                totalPrice:getTotalPrice(prevState.rows,prevProps.priceMap),
+                rows:getUpdatedRowData(prevState.rows,prevProps.priceMap)
+            });
+        }
     }
 
     render() {
@@ -88,8 +119,8 @@ class ReceivedItemsComponent extends Component {
                                             <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { this.updateTypeAheadSelectedName(selected, row.id) }} options={this.props.itemNameList===null?[]:this.props.itemNameList} />
                                         </td>
                                         <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={this.updateQty} /></td>
-                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.name===""?0:this.props.priceMap[row.name]} disabled={true} /></td>
-                                        <td><Input type="number" name={"tPrice_" + row.id} value={row.name===""?0:this.props.priceMap[row.name]*row.qty} disabled={true} /></td>
+                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
+                                        <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
                                         <td>
                                             <div>
                                                 <ButtonGroup>
