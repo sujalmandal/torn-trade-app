@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import App from './App';
 import { IdGenerator } from './utils/IdGenerator'
-import { populateDefaultPriceMap } from './utils/priceMapGenerator'
+import { populateDefaultPriceMap } from './utils/PriceMapGenerator'
 import * as serviceWorker from './serviceWorker';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';

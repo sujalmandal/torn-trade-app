@@ -1,15 +1,16 @@
 /* eslint-disable react/no-direct-mutation-state */
+
+/* core imports */
 import React, { Component } from "react"
-import { Input } from "reactstrap"
-import { Container, Row, Col } from 'reactstrap';
-import { Table } from 'reactstrap';
-import { Button, ButtonGroup } from 'reactstrap';
-import { IdGenerator } from '../utils/IdGenerator'
-import { fetchPrice } from '../actions/marketPriceFetchAction'
-import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculator'
+import { connect } from 'react-redux';
+/* UI element imports */
+import { Input,Container, Row, Col,Table, Button, ButtonGroup  } from "reactstrap"
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { connect } from 'react-redux';
+/* custom import */
+import { IdGenerator } from '../utils/IdGenerator'
+import { fetchPrice } from '../actions/MarketPriceFetchAction'
+import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculator'
 
 class SentItemsComponent extends Component {
     constructor(props) {

@@ -3,7 +3,7 @@ import { Button } from "reactstrap";
 import { Input } from "reactstrap";
 import { Container, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
-import {fetchAllItemMetaData} from "../actions/marketItemsFetchAction"
+import {fetchAllItemMetaData} from "../actions/MarketItemsFetchAction"
 
 class InitialiserComponent extends Component{
 
