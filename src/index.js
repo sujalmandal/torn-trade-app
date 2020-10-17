@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import App from './App';
 import { IdGenerator } from './utils/IdGenerator'
+import { populateDefaultPriceMap } from './utils/priceMapGenerator'
 import * as serviceWorker from './serviceWorker';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
@@ -14,6 +15,7 @@ const mainReducer = function (
     apiKey: localStorage.getItem("API_KEY"),
     receivedItems:[{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
     sentItems:[{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
+    priceMap:populateDefaultPriceMap(),
     balance:"",
     time:new Date(),
     loading:false,
@@ -23,6 +25,14 @@ const mainReducer = function (
     itemNameList:JSON.parse(localStorage.getItem("MARKET_ITEMS_SIMPLE"))
   }, action) {
   switch (action.type) {
+    case "MARKET_PRICE_FETCHED":
+      var updatedPriceMap={...state.priceMap};
+      updatedPriceMap[action.payload.itemName]=action.payload.price;
+      return {
+        ...state,
+        time:new Date(),
+        priceMap:updatedPriceMap
+    };
     case "UPDATE_RECEIVED_ITEMS":
       return {
         ...state,
@@ -30,7 +40,7 @@ const mainReducer = function (
         time:new Date(),
         apiCallSuccess:undefined,
         loading:false
-      };
+    };
     case "UPDATE_SENT_ITEMS":
       return  {
         ...state,

@@ -70,7 +70,6 @@ class InitialiserComponent extends Component{
 
 /* mapping for redux */
 const mapStateToProps = state => {
-  console.log("InitialiserComponent props update triggered!");
   return {
       apiKey: state.apiKey,
       loading: state.loading,

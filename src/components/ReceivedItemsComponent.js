@@ -28,7 +28,7 @@ class ReceivedItemsComponent extends Component {
             tPrice: 0
         })
         this.forceUpdate();
-        //this.props.handleReceivedItemsUpdated(this.state.rows);
+        this.props.handleReceivedItemsUpdated(this.state.rows);
     }
 
     removeRow = (currentRow) => {
@@ -36,7 +36,7 @@ class ReceivedItemsComponent extends Component {
             return row.id !== currentRow.id;
         });
         this.forceUpdate();
-        //this.props.handleReceivedItemsUpdated(this.state.rows);
+        this.props.handleReceivedItemsUpdated(this.state.rows);
     }
 
     updateQty = (event) => {
@@ -49,25 +49,18 @@ class ReceivedItemsComponent extends Component {
             }
         });
         this.forceUpdate();
-        //this.props.handleReceivedItemsUpdated(this.state.rows);
+        this.props.handleReceivedItemsUpdated(this.state.rows);
     }
 
     updateTypeAheadSelectedName = (selectedItemName, rowId) => {
-        var itemName=selectedItemName[0];
+        var itemName = selectedItemName[0];
         this.state.rows.forEach((row) => {
             if (row.id === rowId) {
                 row.name = itemName;
             }
         });
+        this.props.fetchItemPrice(this.props.apiKey,itemName,this.props.itemsStore);
         this.forceUpdate();
-        this.props.handleReceivedItemsUpdated(
-            this.props.apiKey,
-            itemName,
-            this.props.itemsStore,
-            this.state.rows,
-            rowId,
-            true
-        );
     }
 
     render() {
@@ -95,8 +88,8 @@ class ReceivedItemsComponent extends Component {
                                             <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { this.updateTypeAheadSelectedName(selected, row.id) }} options={this.props.itemNameList} />
                                         </td>
                                         <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={this.updateQty} /></td>
-                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
-                                        <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
+                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.name===""?0:this.props.priceMap[row.name]} disabled={true} /></td>
+                                        <td><Input type="number" name={"tPrice_" + row.id} value={row.name===""?0:this.props.priceMap[row.name]*row.qty} disabled={true} /></td>
                                         <td>
                                             <div>
                                                 <ButtonGroup>
@@ -121,32 +114,23 @@ class ReceivedItemsComponent extends Component {
 }
 
 /* mapping for redux */
-const mapStateToProps = state => {
-    console.log("ReceivedItemsComponent props update triggered!");
+const mapStateToProps = (reduxState) => {
     return {
-        apiKey: state.apiKey,
-        itemNameList: state.itemNameList,
-        receivedItems: state.receivedItems,
-        itemsStore: state.itemsStore
+        apiKey: reduxState.apiKey,
+        itemNameList: reduxState.itemNameList,
+        receivedItems: reduxState.receivedItems,
+        itemsStore: reduxState.itemsStore,
+        priceMap: reduxState.priceMap
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        handleReceivedItemsUpdated: (apiKey, itemName, itemsStore, receivedList, rowId, requiresPriceCheck) => {
-            if (requiresPriceCheck) {
-                dispatch(fetchPrice(
-                    apiKey,
-                    itemName,
-                    itemsStore,
-                    receivedList,
-                    rowId,
-                    { type: 'UPDATE_RECEIVED_ITEMS', payload: { "receivedItems": receivedList } }
-                ));
-            }
-            else {
-                dispatch({ type: 'UPDATE_RECEIVED_ITEMS', payload: { "receivedItems": receivedList } });
-            }
+        handleReceivedItemsUpdated: (receivedList) => {
+            dispatch({ type: 'UPDATE_RECEIVED_ITEMS', payload: { "receivedItems": receivedList } });
+        },
+        fetchItemPrice: (apiKey,itemName,itemsStore) => {
+            dispatch(fetchPrice(apiKey,itemName,itemsStore));
         }
     }
 };

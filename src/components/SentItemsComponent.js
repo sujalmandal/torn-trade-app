@@ -5,6 +5,7 @@ import { Container, Row, Col } from 'reactstrap';
 import { Table } from 'reactstrap';
 import { Button, ButtonGroup } from 'reactstrap';
 import { IdGenerator } from '../utils/IdGenerator'
+import { fetchPrice } from '../actions/marketPriceFetchAction'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { connect } from 'react-redux';
@@ -14,7 +15,7 @@ class SentItemsComponent extends Component {
         super(props);
         this.state = {
             totalPrice: 0,
-            rows: [{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
+            rows: this.props.sentItems
         }
     }
 
@@ -38,7 +39,7 @@ class SentItemsComponent extends Component {
         this.props.handleSentItemsUpdated(this.state.rows);
     }
 
-    updateValue = (event) => {
+    updateQty = (event) => {
         var fieldName = event.target.name.split("_")[0];
         var rowId = event.target.name.split("_")[1];
         var value = event.target.value;
@@ -52,13 +53,14 @@ class SentItemsComponent extends Component {
     }
 
     updateTypeAheadSelectedName = (selectedItemName, rowId) => {
+        var itemName = selectedItemName[0];
         this.state.rows.forEach((row) => {
             if (row.id === rowId) {
-                row["name"] = selectedItemName;
+                row.name = itemName;
             }
         });
+        this.props.fetchItemPrice(this.props.apiKey,itemName,this.props.itemsStore);
         this.forceUpdate();
-        this.props.handleSentItemsUpdated(this.state.rows);
     }
 
     render() {
@@ -85,9 +87,9 @@ class SentItemsComponent extends Component {
                                         <td>
                                             <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { this.updateTypeAheadSelectedName(selected, row.id) }} options={this.props.itemNameList} />
                                         </td>
-                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={this.updateValue} /></td>
-                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
-                                        <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
+                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={this.updateQty} /></td>
+                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.name===""?0:this.props.priceMap[row.name]} disabled={true} /></td>
+                                        <td><Input type="number" name={"tPrice_" + row.id} value={row.name===""?0:this.props.priceMap[row.name]*row.qty} disabled={true} /></td>
                                         <td>
                                             <div>
                                                 <ButtonGroup>
@@ -111,15 +113,24 @@ class SentItemsComponent extends Component {
 }
 
 /* mapping for redux */
-const mapStateToProps = state => {
+const mapStateToProps = (reduxState) => {
     return {
-        itemNameList: state.itemNameList
+        apiKey: reduxState.apiKey,
+        itemNameList: reduxState.itemNameList,
+        sentItems: reduxState.sentItems,
+        itemsStore: reduxState.itemsStore,
+        priceMap: reduxState.priceMap
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        handleSentItemsUpdated: (sentList) => dispatch({ type: 'UPDATE_SENT_ITEMS', payload: { "sentItems": sentList } })
+        handleSentItemsUpdated: (sentList) => {
+            dispatch({ type: 'UPDATE_SENT_ITEMS', payload: { "sentItems": sentList } })
+        },
+        fetchItemPrice: (apiKey,itemName,itemsStore) => {
+            dispatch(fetchPrice(apiKey,itemName,itemsStore));
+        }
     }
 };
 

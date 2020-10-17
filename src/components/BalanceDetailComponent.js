@@ -45,7 +45,6 @@ class BalanceDetailComponent extends Component {
 
 /* mapping for redux */
 const mapStateToProps = state => {
-    console.log("BalanceDetailComponent props update triggered!");
     return {
         ...state
     };
@@ -53,7 +52,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        
     }
 };
 
