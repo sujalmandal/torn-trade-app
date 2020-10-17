@@ -17,7 +17,8 @@ class SentItemsComponent extends Component {
         super(props);
         this.state = {
             totalPrice: 0,
-            rows: this.props.sentItems
+            rows: this.props.sentItems,
+            forceRecalculation:false
         }
     }
 
@@ -37,6 +38,7 @@ class SentItemsComponent extends Component {
         this.state.rows = this.state.rows.filter((row) => {
             return row.id !== currentRow.id;
         });
+        this.state.forceRecalculation=true;
         this.forceUpdate();
         this.props.handleSentItemsUpdated(this.state.rows);
     }
@@ -50,6 +52,7 @@ class SentItemsComponent extends Component {
                 row[fieldName] = value;
             }
         });
+        this.state.forceRecalculation=true;
         this.forceUpdate();
         this.props.handleSentItemsUpdated(this.state.rows);
     }
@@ -61,34 +64,19 @@ class SentItemsComponent extends Component {
                 row.name = itemName;
             }
         });
+        this.state.forceRecalculation=true;
         this.props.fetchItemPrice(this.props.apiKey, itemName, this.props.itemsStore);
         this.forceUpdate();
-    }
-    //find out if any kind of calculation is required
-    calculationRequired = (rows,priceMap) => {
-        var calculationRequired = false;
-        rows.forEach((row) => {
-            //user has selected the name & the api has fetched the value but the state variable mPrice is not updated
-            if (row.name !== "" && priceMap[row.name] !== row.mPrice) {
-                calculationRequired = true;
-                return;
-            }
-            //if everything is updated but the stateVariable tPrice is not updated
-            if (row.name !== "" && priceMap[row.name] === row.mPrice
-                && row.qty !== 0 && row.tPrice !== (parseInt(row.mPrice) * parseInt(row.qty))) {
-                calculationRequired = true;
-                return;
-            }
-        });
-        return calculationRequired;
     }
 
     //update the market price in the array after API has fetched the price in the priceMap
     componentDidUpdate(prevProps, prevState) {
-        if (this.calculationRequired(prevState.rows,prevProps.priceMap)) {
+        console.log("SentItemsComponent updated()");
+        if(prevState.forceRecalculation){
             this.setState({
-                totalPrice: getTotalPrice(prevState.rows, prevProps.priceMap),
-                rows: getUpdatedRowData(prevState.rows, prevProps.priceMap)
+                totalPrice:getTotalPrice(prevState.rows,prevProps.priceMap),
+                rows:getUpdatedRowData(prevState.rows,prevProps.priceMap),
+                forceRecalculation:false
             });
         }
     }

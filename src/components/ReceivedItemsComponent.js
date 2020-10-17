@@ -16,7 +16,8 @@ class ReceivedItemsComponent extends Component {
         super(props);
         this.state = {
             totalPrice: 0,
-            rows: this.props.receivedItems
+            rows: this.props.receivedItems,
+            forceRecalculation:false
         }
     }
 
@@ -36,6 +37,7 @@ class ReceivedItemsComponent extends Component {
         this.state.rows = this.state.rows.filter((row) => {
             return row.id !== currentRow.id;
         });
+        this.state.forceRecalculation=true;
         this.forceUpdate();
         this.props.handleReceivedItemsUpdated(this.state.rows);
     }
@@ -49,6 +51,7 @@ class ReceivedItemsComponent extends Component {
                 row[fieldName] = value;
             }
         });
+        this.state.forceRecalculation=true;
         this.forceUpdate();
         this.props.handleReceivedItemsUpdated(this.state.rows);
     }
@@ -62,34 +65,18 @@ class ReceivedItemsComponent extends Component {
         });
         //dispatch a api call to fetch prices in the priceMap in reduxStore
         this.props.fetchItemPrice(this.props.apiKey,itemName,this.props.itemsStore);
+        this.state.forceRecalculation=true;
         this.forceUpdate();
-    }
-
-    //find out if any kind of calculation is required
-    calculationRequired=(rows,priceMap)=>{
-        var calculationRequired=false;
-        rows.forEach((row)=>{
-            //user has selected the name & the api has fetched the value but the state variable mPrice is not updated
-            if(row.name!=="" && priceMap[row.name]!==row.mPrice){
-                calculationRequired = true;
-                return;
-            }
-            //if everything is updated but the stateVariable tPrice is not updated
-            if(row.name!=="" && priceMap[row.name]===row.mPrice 
-                && row.qty!==0 && row.tPrice!==(parseInt(row.mPrice) * parseInt(row.qty))){
-                calculationRequired = true;
-                return;
-            }
-        });
-        return calculationRequired;
     }
 
     //update the market price in the array after API has fetched the price in the priceMap
     componentDidUpdate(prevProps,prevState) {
-        if(this.calculationRequired(prevState.rows,prevProps.priceMap)){
+        console.log("ReceivedItemsComponent updated()");
+        if(prevState.forceRecalculation){
             this.setState({
                 totalPrice:getTotalPrice(prevState.rows,prevProps.priceMap),
-                rows:getUpdatedRowData(prevState.rows,prevProps.priceMap)
+                rows:getUpdatedRowData(prevState.rows,prevProps.priceMap),
+                forceRecalculation:false
             });
         }
     }
