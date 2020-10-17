@@ -11,6 +11,7 @@ import thunk from 'redux-thunk';
 import { logger } from 'redux-logger'
 
 const mainReducer = function (
+
   state = {
     apiKey: localStorage.getItem("API_KEY"),
     receivedItems:[{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
@@ -24,6 +25,7 @@ const mainReducer = function (
     itemsStore:JSON.parse(localStorage.getItem("MARKET_ITEMS")),
     itemNameList:JSON.parse(localStorage.getItem("MARKET_ITEMS_SIMPLE"))
   }, action) {
+
   switch (action.type) {
     case "API_KEY_UPDATED":
       return {
@@ -83,10 +85,15 @@ const mainReducer = function (
   }
 };
 
-let store = createStore(mainReducer,applyMiddleware(thunk,logger));
-
+let reduxStore;
+if(localStorage.getItem("debug")){
+  reduxStore = createStore(mainReducer,applyMiddleware(thunk,logger));
+}
+else{
+  reduxStore = createStore(mainReducer,applyMiddleware(thunk));
+}
 const ReactApp = () => (
-  <Provider store={store}>
+  <Provider store={reduxStore}>
     <App/>
   </Provider>
 );
