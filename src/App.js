@@ -2,7 +2,7 @@ import React from 'react';
 import InitialiserComponent from './components/InitialiserComponent'
 import ReceivedItemsComponent from './components/ReceivedItemsComponent'
 import SentItemsComponent from './components/SentItemsComponent'
-import BalanceDetailComponent from './components/BalanceDetailComponent'
+import SummaryDetailComponent from './components/SummaryDetailComponent'
 import { Container, Row, Col } from 'reactstrap';
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
         <Col><SentItemsComponent/></Col>
       </Row>
       <Row>
-        <Col><BalanceDetailComponent/></Col>
+        <Col><SummaryDetailComponent/></Col>
       </Row>
     </Container>
   );
