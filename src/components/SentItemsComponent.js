@@ -8,9 +8,14 @@ import { Input, Container, Row, Col, Table, Button, ButtonGroup } from "reactstr
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
-import { IdGenerator } from '../utils/IdGenerator'
 import { fetchPrice } from '../actions/MarketPriceFetchAction'
 import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculator'
+import {
+    updateTypeAheadSelectedName,
+    addRowInSentItems,
+    removeRowFromSentItems,
+    updateQtyInSentItems
+} from '../helpers/ItemsComponentHelper'
 
 class SentItemsComponent extends Component {
     constructor(props) {
@@ -20,52 +25,6 @@ class SentItemsComponent extends Component {
             rows: this.props.sent.items,
             forceRecalculation: false
         }
-    }
-
-    addRow = () => {
-        this.state.rows.push({
-            id: IdGenerator(),
-            name: "",
-            qty: 0,
-            mPrice: 0,
-            tPrice: 0
-        })
-        this.forceUpdate();
-        this.props.pushSentItemDetails(this.state.rows, this.state.totalPrice);
-    }
-
-    removeRow = (currentRow) => {
-        this.state.rows = this.state.rows.filter((row) => {
-            return row.id !== currentRow.id;
-        });
-        this.state.forceRecalculation = true;
-        this.forceUpdate();
-        this.props.pushSentItemDetails(this.state.rows, this.state.totalPrice);
-    }
-
-    updateQty = (event) => {
-        var fieldName = event.target.name.split("_")[0];
-        var rowId = event.target.name.split("_")[1];
-        var value = event.target.value;
-        this.state.rows.forEach((row) => {
-            if (row.id === rowId) {
-                row[fieldName] = value;
-            }
-        });
-        this.state.forceRecalculation = true;
-        this.forceUpdate();
-        this.props.pushSentItemDetails(this.state.rows, this.state.totalPrice);
-    }
-
-    updateTypeAheadSelectedName = (selectedItemName, rowId) => {
-        var itemName = selectedItemName[0];
-        this.state.rows.forEach((row) => {
-            if (row.id === rowId) {
-                row.name = itemName;
-            }
-        });
-        this.state.forceRecalculation = true;
-        this.props.fetchItemPrice(this.props.apiKey, itemName, this.props.itemsStore);
     }
 
     //update the market price in the array after API has fetched the price in the priceMap
@@ -103,16 +62,16 @@ class SentItemsComponent extends Component {
                                 return (
                                     <tr key={row.id}>
                                         <td>
-                                            <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { this.updateTypeAheadSelectedName(selected, row.id) }} options={this.props.itemNameList === null ? [] : this.props.itemNameList} />
+                                            <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={this.props.itemNameList === null ? [] : this.props.itemNameList} />
                                         </td>
-                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={this.updateQty} min={0} /></td>
+                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event) => { updateQtyInSentItems(event, this) }} min={0} /></td>
                                         <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
                                         <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
                                         <td>
                                             <div>
                                                 <ButtonGroup>
-                                                    <Button color="success" disabled={this.props.itemNameList === null} onClick={() => { this.addRow() }}>+</Button>
-                                                    <Button color="danger" disabled={this.props.itemNameList === null} onClick={() => { this.removeRow(row) }}>-</Button>
+                                                    <Button color="success" disabled={this.props.itemNameList === null} onClick={() => { addRowInSentItems(this) }}>+</Button>
+                                                    <Button color="danger" disabled={this.props.itemNameList === null} onClick={() => { removeRowFromSentItems(row, this) }}>-</Button>
                                                 </ButtonGroup>
                                             </div>
                                         </td>
@@ -144,12 +103,14 @@ const mapStateToProps = (reduxState) => {
 const mapDispatchToProps = dispatch => {
     return {
         pushSentItemDetails: (items, totalPrice) => {
-            dispatch({ type: 'UPDATE_SENT_ITEMS', payload: { 
-                sent: { 
+            dispatch({
+                type: 'UPDATE_SENT_ITEMS', payload: {
+                    sent: {
                         items: items,
-                        total: totalPrice 
-                    } }
-                });
+                        total: totalPrice
+                    }
+                }
+            });
         },
         fetchItemPrice: (apiKey, itemName, itemsStore) => {
             dispatch(fetchPrice(apiKey, itemName, itemsStore));
