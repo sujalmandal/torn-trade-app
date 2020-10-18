@@ -32,8 +32,8 @@ class SentItemsComponent extends Component {
         console.log("SentItemsComponent updated()");
         if (prevState.forceRecalculation) {
             this.setState({
-                totalPrice: getTotalPrice(prevState.rows, prevProps.priceMap),
-                rows: getUpdatedRowData(prevState.rows, prevProps.priceMap),
+                totalPrice: getTotalPrice(prevState.rows, prevProps.itemNameList, prevProps.priceMap),
+                rows: getUpdatedRowData(prevState.rows, prevProps.itemNameList, prevProps.priceMap),
                 forceRecalculation: false
             });
             this.props.pushSentItemDetails(this.state.rows, this.state.totalPrice);

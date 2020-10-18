@@ -1,17 +1,21 @@
-export function getUpdatedRowData(rows,priceMap){
+export function getUpdatedRowData(rows,itemNamesList,priceMap){
     return rows.map((row)=>{
-        //update mPrice
-        row.mPrice=priceMap[row.name];
-        //update tPrice
-        row.tPrice=row.qty*row.mPrice;
+        if(itemNamesList.includes(row.name)){
+            //update mPrice
+            row.mPrice=priceMap[row.name];
+            //update tPrice
+            row.tPrice=row.qty*row.mPrice;
+        }
         return {...row};
     });
 }
 
-export function getTotalPrice(rows,priceMap){
+export function getTotalPrice(rows,itemNamesList,priceMap){
     var totalPrice=0;
     rows.forEach((row)=>{
-        totalPrice+=priceMap[row.name]*row.qty;
+        if(itemNamesList.includes(row.name)){
+            totalPrice+=priceMap[row.name]*row.qty;
+        }
     });
     return totalPrice;
 }

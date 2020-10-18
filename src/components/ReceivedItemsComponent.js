@@ -31,8 +31,8 @@ class ReceivedItemsComponent extends Component {
         console.log("ReceivedItemsComponent updated()");
         if(prevState.forceRecalculation){
             this.setState({
-                totalPrice:getTotalPrice(prevState.rows,prevProps.priceMap),
-                rows:getUpdatedRowData(prevState.rows,prevProps.priceMap),
+                totalPrice:getTotalPrice(prevState.rows,prevProps.itemNameList,prevProps.priceMap),
+                rows:getUpdatedRowData(prevState.rows,prevProps.itemNameList,prevProps.priceMap),
                 forceRecalculation:false
             });
             this.props.pushReceivedItemsDetail(this.state.rows,this.state.totalPrice);
