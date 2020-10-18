@@ -4,7 +4,7 @@
 import React, { Component } from "react"
 import { connect } from 'react-redux';
 /* UI element imports */
-import { Input,Container, Row, Col,Table, Button, ButtonGroup  } from "reactstrap"
+import { Input, Container, Row, Col, Table, Button, ButtonGroup } from "reactstrap"
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
@@ -16,9 +16,9 @@ class SentItemsComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            totalPrice: 0,
-            rows: this.props.sentItems,
-            forceRecalculation:false
+            totalPrice: this.props.sent.total,
+            rows: this.props.sent.items,
+            forceRecalculation: false
         }
     }
 
@@ -31,16 +31,16 @@ class SentItemsComponent extends Component {
             tPrice: 0
         })
         this.forceUpdate();
-        this.props.handleSentItemsUpdated(this.state.rows);
+        this.props.pushSentItemDetails(this.state.rows, this.state.totalPrice);
     }
 
     removeRow = (currentRow) => {
         this.state.rows = this.state.rows.filter((row) => {
             return row.id !== currentRow.id;
         });
-        this.state.forceRecalculation=true;
+        this.state.forceRecalculation = true;
         this.forceUpdate();
-        this.props.handleSentItemsUpdated(this.state.rows);
+        this.props.pushSentItemDetails(this.state.rows, this.state.totalPrice);
     }
 
     updateQty = (event) => {
@@ -52,9 +52,9 @@ class SentItemsComponent extends Component {
                 row[fieldName] = value;
             }
         });
-        this.state.forceRecalculation=true;
+        this.state.forceRecalculation = true;
         this.forceUpdate();
-        this.props.handleSentItemsUpdated(this.state.rows);
+        this.props.pushSentItemDetails(this.state.rows, this.state.totalPrice);
     }
 
     updateTypeAheadSelectedName = (selectedItemName, rowId) => {
@@ -64,19 +64,20 @@ class SentItemsComponent extends Component {
                 row.name = itemName;
             }
         });
-        this.state.forceRecalculation=true;
+        this.state.forceRecalculation = true;
         this.props.fetchItemPrice(this.props.apiKey, itemName, this.props.itemsStore);
     }
 
     //update the market price in the array after API has fetched the price in the priceMap
     componentDidUpdate(prevProps, prevState) {
         console.log("SentItemsComponent updated()");
-        if(prevState.forceRecalculation){
+        if (prevState.forceRecalculation) {
             this.setState({
-                totalPrice:getTotalPrice(prevState.rows,prevProps.priceMap),
-                rows:getUpdatedRowData(prevState.rows,prevProps.priceMap),
-                forceRecalculation:false
+                totalPrice: getTotalPrice(prevState.rows, prevProps.priceMap),
+                rows: getUpdatedRowData(prevState.rows, prevProps.priceMap),
+                forceRecalculation: false
             });
+            this.props.pushSentItemDetails(this.state.rows, this.state.totalPrice);
         }
     }
 
@@ -104,7 +105,7 @@ class SentItemsComponent extends Component {
                                         <td>
                                             <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { this.updateTypeAheadSelectedName(selected, row.id) }} options={this.props.itemNameList === null ? [] : this.props.itemNameList} />
                                         </td>
-                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={this.updateQty} min={0}/></td>
+                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={this.updateQty} min={0} /></td>
                                         <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
                                         <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
                                         <td>
@@ -134,7 +135,7 @@ const mapStateToProps = (reduxState) => {
     return {
         apiKey: reduxState.apiKey,
         itemNameList: reduxState.itemNameList,
-        sentItems: reduxState.sentItems,
+        sent: reduxState.sent,
         itemsStore: reduxState.itemsStore,
         priceMap: reduxState.priceMap
     };
@@ -142,8 +143,13 @@ const mapStateToProps = (reduxState) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        handleSentItemsUpdated: (sentList) => {
-            dispatch({ type: 'UPDATE_SENT_ITEMS', payload: { "sentItems": sentList } })
+        pushSentItemDetails: (items, totalPrice) => {
+            dispatch({ type: 'UPDATE_SENT_ITEMS', payload: { 
+                sent: { 
+                        items: items,
+                        total: totalPrice 
+                    } }
+                });
         },
         fetchItemPrice: (apiKey, itemName, itemsStore) => {
             dispatch(fetchPrice(apiKey, itemName, itemsStore));

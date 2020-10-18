@@ -13,12 +13,20 @@ import { logger } from 'redux-logger'
 const mainReducer = function (
 
   state = {
-    apiKey: localStorage.getItem("API_KEY"),
-    receivedItems:[{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
-    sentItems:[{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
-    priceMap:populateDefaultPriceMap(),
-    balance:"",
     time:new Date(),
+    apiKey: localStorage.getItem("API_KEY"),
+    received:{
+      items:[{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
+      total:0
+    },
+    sent:{
+      items:[{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
+      total:0
+    },
+    tradeSummary:{
+      balance:0
+    },
+    priceMap:populateDefaultPriceMap(),
     loading:false,
     apiErrorMsg:"",
     apiCallSuccess:undefined,
@@ -37,48 +45,55 @@ const mainReducer = function (
       updatedPriceMap[action.payload.itemName]=action.payload.price;
       return {
         ...state,
-        time:new Date(),
-        priceMap:updatedPriceMap
+        priceMap:updatedPriceMap,
+        time:new Date()
     };
     case "UPDATE_RECEIVED_ITEMS":
       return {
         ...state,
-        receivedItems:action.payload.receivedItems,
-        time:new Date(),
+        received:action.payload.received,
         apiCallSuccess:undefined,
-        loading:false
+        loading:false,
+        time:new Date()
     };
     case "UPDATE_SENT_ITEMS":
       return  {
         ...state,
-        time:new Date(),
+        sent:action.payload.sent,
         apiCallSuccess:undefined,
-        loading:false
-      };
+        loading:false,
+        time:new Date()
+    };
+    case "UPDATE_TRADE_SUMMARY":
+      return  {
+        ...state,
+        tradeSummary:action.payload.summary,
+        time:new Date()
+    };
     case "MARKET_ITEMS_FETCH_STARTED":
       return  {
         ...state,
-        time:new Date(),
         loading:action.payload.loading,
-        apiCallSuccess:undefined
+        apiCallSuccess:undefined,
+        time:new Date()
       };
     case "MARKET_ITEMS_FETCH_SUCCESS":
       return {
         ...state,
-        time:new Date(),
         priceMap:populateDefaultPriceMap(),
         loading:action.payload.loading,
         itemsStore:action.payload.itemsStore,
         itemNameList:action.payload.itemNameList,
-        apiCallSuccess:true
+        apiCallSuccess:true,
+        time:new Date()
       };
     case "MARKET_ITEMS_FETCH_FAILED":
       return {
         ...state,
-        time:new Date(),
         loading:action.payload.loading,
         apiCallSuccess:false,
-        apiErrorMsg:action.payload.error
+        apiErrorMsg:action.payload.error,
+        time:new Date()
       };
     default:
       return state;

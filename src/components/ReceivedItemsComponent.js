@@ -15,8 +15,8 @@ class ReceivedItemsComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            totalPrice: 0,
-            rows: this.props.receivedItems,
+            totalPrice: this.props.received.total,
+            rows: this.props.received.items,
             forceRecalculation:false
         }
     }
@@ -30,7 +30,7 @@ class ReceivedItemsComponent extends Component {
             tPrice: 0
         })
         this.forceUpdate();
-        this.props.handleReceivedItemsUpdated(this.state.rows);
+        this.props.pushReceivedItemsDetail(this.state.rows,this.state.totalPrice);
     }
 
     removeRow = (currentRow) => {
@@ -39,7 +39,7 @@ class ReceivedItemsComponent extends Component {
         });
         this.state.forceRecalculation=true;
         this.forceUpdate();
-        this.props.handleReceivedItemsUpdated(this.state.rows);
+        this.props.pushReceivedItemsDetail(this.state.rows,this.state.totalPrice);
     }
 
     updateQty = (event) => {
@@ -53,7 +53,7 @@ class ReceivedItemsComponent extends Component {
         });
         this.state.forceRecalculation=true;
         this.forceUpdate();
-        this.props.handleReceivedItemsUpdated(this.state.rows);
+        this.props.pushReceivedItemsDetail(this.state.rows,this.state.totalPrice);
     }
 
     updateTypeAheadSelectedName = (selectedItemName, rowId) => {
@@ -77,6 +77,7 @@ class ReceivedItemsComponent extends Component {
                 rows:getUpdatedRowData(prevState.rows,prevProps.priceMap),
                 forceRecalculation:false
             });
+            this.props.pushReceivedItemsDetail(this.state.rows,this.state.totalPrice);
         }
     }
 
@@ -135,7 +136,7 @@ const mapStateToProps = (reduxState) => {
     return {
         apiKey: reduxState.apiKey,
         itemNameList: reduxState.itemNameList,
-        receivedItems: reduxState.receivedItems,
+        received: reduxState.received,
         itemsStore: reduxState.itemsStore,
         priceMap: reduxState.priceMap
     };
@@ -143,8 +144,13 @@ const mapStateToProps = (reduxState) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        handleReceivedItemsUpdated: (receivedList) => {
-            dispatch({ type: 'UPDATE_RECEIVED_ITEMS', payload: { "receivedItems": receivedList } });
+        pushReceivedItemsDetail: (items,totalPrice) => {
+            dispatch({ type: 'UPDATE_RECEIVED_ITEMS', payload: { 
+                received: {   
+                    items: items,
+                    total: totalPrice
+                } }
+            });
         },
         fetchItemPrice: (apiKey,itemName,itemsStore) => {
             dispatch(fetchPrice(apiKey,itemName,itemsStore));
