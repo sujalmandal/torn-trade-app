@@ -42,8 +42,8 @@ const started = () => ({
   }
 });
 
-const failed = error => ({
-  type: "MARKET_ITEMS_FETCH_FAILED",
+const failed = (error) => ({
+  type: "API_CALL_FAILED",
   payload: {
     error,
     loading: false

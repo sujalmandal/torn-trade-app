@@ -15,7 +15,15 @@ export const fetchPrice = (apiKey, itemName, itemsStore) => {
         dispatch({ type: 'MARKET_PRICE_FETCHED', payload: { "price": bestPrice, "itemName": itemName } })
       })
       .catch(err => {
-        console.log(err.message)
+        console.log(failed(err.message))
       });
   };
 };
+
+const failed = (error) => ({
+  type: "API_CALL_FAILED",
+  payload: {
+    error,
+    loading: false
+  }
+});
