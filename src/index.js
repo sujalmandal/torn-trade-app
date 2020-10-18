@@ -79,7 +79,10 @@ const mainReducer = function (
     case "UPDATE_TRADE_SUMMARY":
       return {
         ...state,
-        tradeSummary: action.payload.summary,
+        tradeSummary: {
+          ...state.tradeSummary,
+          balance:action.payload.summary.balance
+        },
         time: new Date()
       };
     case "MARKET_ITEMS_FETCH_STARTED":

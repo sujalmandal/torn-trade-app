@@ -13,17 +13,15 @@ class SummaryDetailComponent extends Component {
         }
     }
 
-    toggleSummaryDialog=()=> {
+    toggleSummaryDialog = () => {
         this.setState({
             ...this.state,
             isSummaryDialogOpen: !this.state.isSummaryDialogOpen
         })
     }
 
-    copySummaryDataToClipboard=(event)=> {
-        var textArea = document.getElementById("summaryText");
-        textArea.select()
-        document.execCommand('copy')
+    copySummaryDataToClipboard = (event) => {
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -34,7 +32,14 @@ class SummaryDetailComponent extends Component {
     }
 
     render() {
+        let disableShowSummaryButton=false;
         let btnColor;
+        let balanceText = "";
+        let balanceColor = "green";
+
+        if(this.props.itemNameList === null){
+            disableShowSummaryButton=true;
+        }
 
         if (this.props.itemsStore === null || !this.props.itemsStore) {
             btnColor = "secondary";
@@ -42,33 +47,59 @@ class SummaryDetailComponent extends Component {
         else {
             btnColor = "primary";
         }
+        //user received less
+        if (this.props.tradeSummary.balance < 0){
+            balanceText=this.props.tradeSummary.yourName+" gets $"+this.props.tradeSummary.balance+".";
+        }
+        //user received more
+        else if(this.props.tradeSummary.balance > 0){
+            balanceColor="red";
+            balanceText=this.props.tradeSummary.yourName+" needs to send an additional $"+this.props.tradeSummary.balance+".";
+        }
+        //balanced
+        else if(this.props.tradeSummary.balance === 0){
+            balanceText="The trade is balanced.";
+        }
+        
         return (
             <Container>
                 <Row>
                     <Col>
-                        {(() => {
-                            if (this.props.tradeSummary.balance < 0)
-                                return <h5 style={{ color: "green" }}>You are owed {this.props.tradeSummary.balance} $</h5>;
-                            if (this.props.tradeSummary.balance > 0)
-                                return <h5 style={{ color: "red" }}>You owe {this.props.tradeSummary.balance} $</h5>;
-                            if (this.props.tradeSummary.balance === 0) {
-                                return <h5 style={{ color: "green" }}>The trade is balanced</h5>;
-                            }
-                        })()}
+                        <h5 style={{ color: balanceColor }}>{balanceText}</h5>
                     </Col>
                     <Row>
                         <Col>
-                            <Button 
+                            <Button
                                 color={btnColor}
-                                disabled={this.props.itemNameList === null}
+                                disabled={disableShowSummaryButton}
                                 onClick={this.toggleSummaryDialog}>
-                                    Show Summary
+                                Show Summary
                             </Button>
                             <Modal isOpen={this.state.isSummaryDialogOpen} toggle={this.toggleSummaryDialog}>
                                 <ModalHeader toggle={this.toggleSummaryDialog}>Trade Summary</ModalHeader>
-                                    <ModalBody>
-                                        <Input type="textarea" name="text" value={"trade info here"} id="summaryText" />
-                                    </ModalBody>
+                                <ModalBody>
+                                    <div id="summaryText">
+                                        <span>{this.props.tradeSummary.yourName}</span> {" sent you the following items"}
+                                        <br />
+                                            {this.props.sent.items.map((row)=>{
+                                                var rowText=row.name+" x"+row.qty+" @ $"+row.mPrice;
+                                                return <div><span>{rowText}</span><br/></div>
+                                            })}
+                                        <br />
+                                        <span>Total worth{" $" + this.props.sent.total}</span>
+                                        <br />
+                                        <span>You sent {this.props.tradeSummary.yourName}{" the following items"}</span>
+                                        <br />
+                                            {this.props.received.items.map((row)=>{
+                                                var rowText=row.name+" x"+row.qty+" @ $"+row.mPrice;
+                                                return <div><span>{rowText}</span><br/></div>
+                                            })}
+                                        <br />
+                                        <span>Total worth{" $" + this.props.received.total}</span>
+                                        <br />
+                                        <span>{balanceText}</span>
+                                    </div>
+                                </ModalBody>
                                 <ModalFooter>
                                     <Button color="primary" onClick={this.copySummaryDataToClipboard}>Copy To Clipboard</Button>{' '}
                                     <Button color="secondary" onClick={this.toggleSummaryDialog}>Cancel</Button>
