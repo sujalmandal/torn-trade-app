@@ -66,7 +66,6 @@ class SentItemsComponent extends Component {
         });
         this.state.forceRecalculation=true;
         this.props.fetchItemPrice(this.props.apiKey, itemName, this.props.itemsStore);
-        this.forceUpdate();
     }
 
     //update the market price in the array after API has fetched the price in the priceMap

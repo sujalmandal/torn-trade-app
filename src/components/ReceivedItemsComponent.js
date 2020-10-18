@@ -66,7 +66,6 @@ class ReceivedItemsComponent extends Component {
         //dispatch a api call to fetch prices in the priceMap in reduxStore
         this.props.fetchItemPrice(this.props.apiKey,itemName,this.props.itemsStore);
         this.state.forceRecalculation=true;
-        this.forceUpdate();
     }
 
     //update the market price in the array after API has fetched the price in the priceMap
