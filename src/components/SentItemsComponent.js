@@ -1,5 +1,4 @@
 /* eslint-disable react/no-direct-mutation-state */
-
 /* core imports */
 import React, { Component } from "react"
 import { connect } from 'react-redux';
@@ -9,7 +8,8 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
 import { fetchPrice } from '../actions/MarketPriceFetchAction'
-import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculator'
+import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculatorUtil'
+import { isCurrentRowEmpty,isItemListNotInitialised } from '../utils/ItemRowUtil'
 import {
     updateTypeAheadSelectedName,
     addRowInSentItems,
@@ -70,8 +70,8 @@ class SentItemsComponent extends Component {
                                         <td>
                                             <div>
                                                 <ButtonGroup>
-                                                    <Button color="success" disabled={this.props.itemNameList === null} onClick={() => { addRowInSentItems(this) }}>+</Button>
-                                                    <Button color="danger" disabled={this.props.itemNameList === null} onClick={() => { removeRowFromSentItems(row, this) }}>-</Button>
+                                                    <Button color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInSentItems(this) }}>+</Button>
+                                                    <Button color="danger" disabled={this.state.rows.length===1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromSentItems(row, this) }}>-</Button>
                                                 </ButtonGroup>
                                             </div>
                                         </td>

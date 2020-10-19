@@ -1,4 +1,4 @@
-import { IdGenerator } from '../utils/IdGenerator'
+import { IdGenerator } from '../utils/IdGeneratorUtil'
 
 /* methods common for both SentItemsComponent & ReceivedItemsComponent */
 

@@ -1,6 +1,7 @@
 import React, { Component } from "react"
-import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter, Container, Row, Col } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Container, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
+import { sentAndReceivedItemsEmpty } from '../utils/ItemRowUtil'
 
 class SummaryDetailComponent extends Component {
     constructor(props) {
@@ -32,14 +33,9 @@ class SummaryDetailComponent extends Component {
     }
 
     render() {
-        let disableShowSummaryButton=false;
         let btnColor;
         let balanceText = "";
         let balanceColor = "green";
-
-        if(this.props.itemNameList === null){
-            disableShowSummaryButton=true;
-        }
 
         if (this.props.itemsStore === null || !this.props.itemsStore) {
             btnColor = "secondary";
@@ -71,14 +67,17 @@ class SummaryDetailComponent extends Component {
                         <Col>
                             <Button
                                 color={btnColor}
-                                disabled={disableShowSummaryButton}
+                                disabled={sentAndReceivedItemsEmpty(this.props)}
                                 onClick={this.toggleSummaryDialog}>
                                 Show Summary
                             </Button>
                             <Modal isOpen={this.state.isSummaryDialogOpen} toggle={this.toggleSummaryDialog}>
                                 <ModalHeader toggle={this.toggleSummaryDialog}>Trade Summary</ModalHeader>
                                 <ModalBody>
-                                    <div id="summaryText">
+                                    {sentAndReceivedItemsEmpty(this.props)?
+                                    null:
+                                    (
+                                        <div id="summaryText">
                                         <span>{this.props.tradeSummary.yourName}</span> {" sent you the following items"}
                                         <br />
                                             {this.props.sent.items.map((row)=>{
@@ -99,6 +98,7 @@ class SummaryDetailComponent extends Component {
                                         <br />
                                         <span>{balanceText}</span>
                                     </div>
+                                    )}
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button color="primary" onClick={this.copySummaryDataToClipboard}>Copy To Clipboard</Button>{' '}

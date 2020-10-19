@@ -8,7 +8,8 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
 import { fetchPrice } from '../actions/MarketPriceFetchAction'
-import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculator'
+import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculatorUtil'
+import { isCurrentRowEmpty,isItemListNotInitialised } from '../utils/ItemRowUtil'
 import { 
     updateTypeAheadSelectedName,
     addRowInReceivedItems,
@@ -69,8 +70,8 @@ class ReceivedItemsComponent extends Component {
                                         <td>
                                             <div>
                                                 <ButtonGroup>
-                                                    <Button color="success" disabled={this.props.itemNameList === null} onClick={() => { addRowInReceivedItems(this) }}>+</Button>
-                                                    <Button color="danger" disabled={this.props.itemNameList === null} onClick={() => { removeRowFromReceivedItems(row,this) }}>-</Button>
+                                                    <Button color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInReceivedItems(this) }}>+</Button>
+                                                    <Button color="danger" disabled={this.state.rows.length===1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromReceivedItems(row,this) }}>-</Button>
                                                 </ButtonGroup>
                                             </div>
                                         </td>
@@ -92,11 +93,7 @@ class ReceivedItemsComponent extends Component {
 /* mapping for redux */
 const mapStateToProps = (reduxState) => {
     return {
-        apiKey: reduxState.apiKey,
-        itemNameList: reduxState.itemNameList,
-        received: reduxState.received,
-        itemsStore: reduxState.itemsStore,
-        priceMap: reduxState.priceMap
+        ...reduxState
     };
 };
 
