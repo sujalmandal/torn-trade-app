@@ -9,6 +9,23 @@ export function areRowsEmpty(rows) {
     return isEmpty;
 }
 
+export function refinedOptions(props,rows){
+    if(props.itemNameList===null){
+        return [];
+    }
+    var refinedList=props.itemNameList.filter( item =>{
+        var itemAlreadySelected=false;
+        rows.forEach((row)=>{
+            if(row.name===item){
+                itemAlreadySelected=true;
+               return; 
+            }
+        });
+        return !itemAlreadySelected;
+    });
+    return refinedList;
+}
+
 export function sentAndReceivedItemsEmpty(props){
     return   isItemListNotInitialised(props)
             || areRowsEmpty(props.sent.items) 

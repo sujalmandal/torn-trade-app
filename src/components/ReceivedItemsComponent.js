@@ -9,7 +9,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
 import { fetchPrice } from '../actions/MarketPriceFetchAction'
 import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculatorUtil'
-import { isCurrentRowEmpty,isItemListNotInitialised } from '../utils/ItemRowUtil'
+import { isCurrentRowEmpty,isItemListNotInitialised,refinedOptions } from '../utils/ItemRowUtil'
 import { 
     updateTypeAheadSelectedName,
     addRowInReceivedItems,
@@ -62,7 +62,7 @@ class ReceivedItemsComponent extends Component {
                                 return (
                                     <tr key={row.id}>
                                         <td>
-                                            <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={this.props.itemNameList===null?[]:this.props.itemNameList} />
+                                            <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={refinedOptions(this.props,this.state.rows)} />
                                         </td>
                                         <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event)=>{updateQtyInReceivedItems(event,this)}} min={0} /></td>
                                         <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
