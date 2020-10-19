@@ -7,10 +7,16 @@ export function updateTypeAheadSelectedName(selectedItemName, rowId, componentCo
     componentContext.state.rows.forEach((row) => {
         if (row.id === rowId) {
             row.name = itemName;
+            row.mPrice=0;
+            row.tPrice=0;
         }
     });
     componentContext.state.forceRecalculation = true;
-    componentContext.props.fetchItemPrice(componentContext.props.apiKey, itemName, componentContext.props.itemsStore);
+    componentContext.props.fetchItemPrice(
+        componentContext.props.apiKey, 
+        itemName, 
+        componentContext.props.itemsStore,
+        componentContext);
 }
 
 /* methods exclusive to ReceivedItemsComponent */

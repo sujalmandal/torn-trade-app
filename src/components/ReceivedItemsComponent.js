@@ -23,7 +23,8 @@ class ReceivedItemsComponent extends Component {
         this.state = {
             totalPrice: this.props.received.total,
             rows: this.props.received.items,
-            forceRecalculation:false
+            forceRecalculation:false,
+            type:"RECEIVED"
         }
     }
 
@@ -107,8 +108,8 @@ const mapDispatchToProps = dispatch => {
                 } }
             });
         },
-        fetchItemPrice: (apiKey,itemName,itemsStore) => {
-            dispatch(fetchPrice(apiKey,itemName,itemsStore));
+        fetchItemPrice: (apiKey,itemName,itemsStore,componentContext) => {
+            dispatch(fetchPrice(apiKey,itemName,itemsStore,componentContext));
         }
     }
 };

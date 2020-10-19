@@ -23,7 +23,8 @@ class SentItemsComponent extends Component {
         this.state = {
             totalPrice: this.props.sent.total,
             rows: this.props.sent.items,
-            forceRecalculation: false
+            forceRecalculation: false,
+            type:"SENT"
         }
     }
 
@@ -112,8 +113,8 @@ const mapDispatchToProps = dispatch => {
                 }
             });
         },
-        fetchItemPrice: (apiKey, itemName, itemsStore) => {
-            dispatch(fetchPrice(apiKey, itemName, itemsStore));
+        fetchItemPrice: (apiKey, itemName, itemsStore,componentContext) => {
+            dispatch(fetchPrice(apiKey, itemName, itemsStore,componentContext));
         }
     }
 };

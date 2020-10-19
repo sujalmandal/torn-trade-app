@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const fetchPrice = (apiKey, itemName, itemsStore) => {
+export const fetchPrice = (apiKey, itemName, itemsStore,componentContext) => {
   return dispatch => {
     var itemId = itemsStore.idByName[itemName];
     var itemPriceUrl = "https://api.torn.com/market/" + itemId + "?selections=itemmarket&key=" + apiKey;
@@ -13,6 +13,12 @@ export const fetchPrice = (apiKey, itemName, itemsStore) => {
           bestPrice = listings[0].cost;
         }
         dispatch({ type: 'MARKET_PRICE_FETCHED', payload: { "price": bestPrice, "itemName": itemName } })
+        if(componentContext.state.type==="RECEIVED"){
+          componentContext.props.pushReceivedItemsDetail(componentContext.state.rows,componentContext.state.totalPrice);
+        }
+        if(componentContext.state.type==="SENT"){
+          componentContext.props.pushSentItemDetails(componentContext.state.rows, componentContext.state.totalPrice);
+        }
       })
       .catch(err => {
         console.log(failed(err.message))
