@@ -11,8 +11,8 @@ class FooterComponent extends Component {
                     <br/>
                 </Row>
                 <Row>
-                    <span style={{ "font-size": "80%" }}><i>
-                        If you think this tool is useful & want to <span style={{ "text-decoration":"line-through" }}>make me rich</span> donate, or if the tool is broken,
+                    <span style={{ "fontSize": "80%" }}><i>
+                        If you think this tool is useful & want to <span style={{ "textDecoration":"line-through" }}>make me rich</span> donate, or if the tool is broken,
                         please click&nbsp;<a href="https://www.torn.com/profiles.php?XID=2575642">here</a>
                     </i></span>
                 </Row>

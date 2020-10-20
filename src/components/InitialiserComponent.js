@@ -31,6 +31,15 @@ class InitialiserComponent extends Component {
     }
   }
 
+  refreshPrices = () => {
+    Object.keys(this.props.priceMap).forEach((itemName)=>{
+      if(this.props.priceMap[itemName]!==0){
+        this.props.refreshItemPriceInReduxStore(itemName,9999);
+        
+      }
+    });
+  }
+
   render() {
     let btnName;
     let btnColor;
@@ -44,7 +53,7 @@ class InitialiserComponent extends Component {
         btnColor = "primary";
       }
       else {
-        btnName = "Update";
+        btnName = "Update API Key";
         btnColor = "secondary";
       }
     }
@@ -60,6 +69,8 @@ class InitialiserComponent extends Component {
           </Col>
           <Col>
             <Button color={btnColor} onClick={() => { this.saveApiKeyAndInit() }}>{btnName}</Button>
+            &nbsp;&nbsp;&nbsp;
+            <Button color="info" onClick={this.refreshPrices}>Fetch Latest Prices</Button>
           </Col>
         </Row>
         <Row>
@@ -73,11 +84,7 @@ class InitialiserComponent extends Component {
 /* mapping for redux */
 const mapStateToProps = (reduxState) => {
   return {
-    apiKey: reduxState.apiKey,
-    loading: reduxState.loading,
-    apiCallSuccess: reduxState.apiCallSuccess,
-    apiErrorMsg: reduxState.apiErrorMsg,
-    itemsStore: reduxState.itemsStore
+    ...reduxState
   };
 };
 
@@ -91,6 +98,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     updateUserNameInReduxStore: function (apiKey) {
       dispatch(fetchUserName(apiKey));
+    },
+    refreshItemPriceInReduxStore: function(itemName,price){
+      dispatch({ type: 'MARKET_PRICE_FETCHED', payload: { "price": price, "itemName": itemName } });
     }
   }
 };

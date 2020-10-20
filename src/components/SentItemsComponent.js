@@ -8,8 +8,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
 import { fetchPrice } from '../actions/MarketPriceFetchAction'
-import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculatorUtil'
-import { isCurrentRowEmpty,isItemListNotInitialised,refinedOptions } from '../utils/ItemRowUtil'
+import { isCurrentRowEmpty, isItemListNotInitialised, refinedOptions } from '../utils/ItemRowUtil'
 import {
     updateTypeAheadSelectedName,
     addRowInSentItems,
@@ -24,21 +23,9 @@ class SentItemsComponent extends Component {
             totalPrice: this.props.sent.total,
             rows: this.props.sent.items,
             forceRecalculation: false,
-            type:"SENT"
+            type: "SENT"
         }
-    }
-
-    //update the market price in the array after API has fetched the price in the priceMap
-    componentDidUpdate(prevProps, prevState) {
-        console.log("SentItemsComponent updated()");
-        if (prevState.forceRecalculation) {
-            this.setState({
-                totalPrice: getTotalPrice(prevState.rows, prevProps.itemNameList, prevProps.priceMap),
-                rows: getUpdatedRowData(prevState.rows, prevProps.itemNameList, prevProps.priceMap),
-                forceRecalculation: false
-            });
-            this.props.pushSentItemDetails(this.state.rows, this.state.totalPrice);
-        }
+        props.updateContextInReduxStore(this);
     }
 
     render() {
@@ -63,7 +50,7 @@ class SentItemsComponent extends Component {
                                 return (
                                     <tr key={row.id}>
                                         <td>
-                                            <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={refinedOptions(this.props,this.state.rows)} />
+                                            <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={refinedOptions(this.props, this.state.rows)} />
                                         </td>
                                         <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event) => { updateQtyInSentItems(event, this) }} min={0} /></td>
                                         <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
@@ -72,7 +59,7 @@ class SentItemsComponent extends Component {
                                             <div>
                                                 <ButtonGroup>
                                                     <Button color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInSentItems(this) }}>+</Button>
-                                                    <Button color="danger" disabled={this.state.rows.length===1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromSentItems(row, this) }}>-</Button>
+                                                    <Button color="danger" disabled={this.state.rows.length === 1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromSentItems(row, this) }}>-</Button>
                                                 </ButtonGroup>
                                             </div>
                                         </td>
@@ -93,16 +80,24 @@ class SentItemsComponent extends Component {
 /* mapping for redux */
 const mapStateToProps = (reduxState) => {
     return {
-        apiKey: reduxState.apiKey,
-        itemNameList: reduxState.itemNameList,
-        sent: reduxState.sent,
-        itemsStore: reduxState.itemsStore,
-        priceMap: reduxState.priceMap
+        ...reduxState
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        updateContextInReduxStore: (componentContext) => {
+            dispatch({
+                type: "SENT_ITEM_COMPONENT_CONTEXT_UPDATED", payload: {
+                    sentItemComponentContext: componentContext
+                }
+            });
+        },
+
+        updateSentItemsData: (apiKey, itemName, itemsStore, componentContext, updatesCallback) => {
+            dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, updatesCallback));
+        },
+
         pushSentItemDetails: (items, totalPrice) => {
             dispatch({
                 type: 'UPDATE_SENT_ITEMS', payload: {
@@ -113,8 +108,8 @@ const mapDispatchToProps = dispatch => {
                 }
             });
         },
-        fetchItemPrice: (apiKey, itemName, itemsStore,componentContext) => {
-            dispatch(fetchPrice(apiKey, itemName, itemsStore,componentContext));
+        pushTradeSummary: (calculatedBalance) => {
+            dispatch({ type: "UPDATE_TRADE_SUMMARY", payload: { summary: { balance: calculatedBalance } } });
         }
     }
 };

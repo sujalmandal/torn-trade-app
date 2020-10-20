@@ -3,18 +3,17 @@
 import React, { Component } from "react"
 import { connect } from 'react-redux';
 /* UI element imports */
-import { Input,Container, Row, Col,Table, Button, ButtonGroup  } from "reactstrap"
+import { Input, Container, Row, Col, Table, Button, ButtonGroup } from "reactstrap"
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
 import { fetchPrice } from '../actions/MarketPriceFetchAction'
-import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculatorUtil'
-import { isCurrentRowEmpty,isItemListNotInitialised,refinedOptions } from '../utils/ItemRowUtil'
-import { 
+import { isCurrentRowEmpty, isItemListNotInitialised, refinedOptions } from '../utils/ItemRowUtil'
+import {
     updateTypeAheadSelectedName,
     addRowInReceivedItems,
     removeRowFromReceivedItems,
-    updateQtyInReceivedItems 
+    updateQtyInReceivedItems
 } from '../helpers/ItemsComponentHelper'
 
 class ReceivedItemsComponent extends Component {
@@ -23,22 +22,10 @@ class ReceivedItemsComponent extends Component {
         this.state = {
             totalPrice: this.props.received.total,
             rows: this.props.received.items,
-            forceRecalculation:false,
-            type:"RECEIVED"
+            forceRecalculation: false,
+            type: "RECEIVED"
         }
-    }
-
-    //update the market price in the array after API has fetched the price in the priceMap
-    componentDidUpdate(prevProps,prevState) {
-        console.log("ReceivedItemsComponent updated()");
-        if(prevState.forceRecalculation){
-            this.setState({
-                totalPrice:getTotalPrice(prevState.rows,prevProps.itemNameList,prevProps.priceMap),
-                rows:getUpdatedRowData(prevState.rows,prevProps.itemNameList,prevProps.priceMap),
-                forceRecalculation:false
-            });
-            this.props.pushReceivedItemsDetail(this.state.rows,this.state.totalPrice);
-        }
+        props.updateContextInReduxStore(this);
     }
 
     render() {
@@ -63,16 +50,16 @@ class ReceivedItemsComponent extends Component {
                                 return (
                                     <tr key={row.id}>
                                         <td>
-                                            <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={refinedOptions(this.props,this.state.rows)} />
+                                            <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={refinedOptions(this.props, this.state.rows)} />
                                         </td>
-                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event)=>{updateQtyInReceivedItems(event,this)}} min={0} /></td>
+                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event) => { updateQtyInReceivedItems(event, this) }} min={0} /></td>
                                         <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
                                         <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
                                         <td>
                                             <div>
                                                 <ButtonGroup>
                                                     <Button color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInReceivedItems(this) }}>+</Button>
-                                                    <Button color="danger" disabled={this.state.rows.length===1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromReceivedItems(row,this) }}>-</Button>
+                                                    <Button color="danger" disabled={this.state.rows.length === 1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromReceivedItems(row, this) }}>-</Button>
                                                 </ButtonGroup>
                                             </div>
                                         </td>
@@ -100,16 +87,32 @@ const mapStateToProps = (reduxState) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        pushReceivedItemsDetail: (items,totalPrice) => {
-            dispatch({ type: 'UPDATE_RECEIVED_ITEMS', payload: { 
-                received: {   
-                    items: items,
-                    total: totalPrice
-                } }
+
+        updateContextInReduxStore: (componentContext) => {
+            dispatch({
+                type: "RECEIVED_ITEM_COMPONENT_CONTEXT_UPDATED", payload: {
+                    receivedItemComponentContext: componentContext
+                }
             });
         },
-        fetchItemPrice: (apiKey,itemName,itemsStore,componentContext) => {
-            dispatch(fetchPrice(apiKey,itemName,itemsStore,componentContext));
+
+        updateReceivedItemsData: (apiKey, itemName, itemsStore, componentContext, updatesCallback) => {
+            dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, updatesCallback));
+        },
+
+        pushReceivedItemsDetail: (items, totalPrice) => {
+            dispatch({
+                type: 'UPDATE_RECEIVED_ITEMS', payload: {
+                    received: {
+                        items: items,
+                        total: totalPrice
+                    }
+                }
+            });
+        },
+
+        pushTradeSummary: (calculatedBalance) => {
+            dispatch({ type: "UPDATE_TRADE_SUMMARY", payload: { summary: { balance: calculatedBalance } } });
         }
     }
 };

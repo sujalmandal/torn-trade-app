@@ -33,7 +33,12 @@ const mainReducer = function (
     apiErrorMsg: "",
     apiCallSuccess: undefined,
     itemsStore: JSON.parse(localStorage.getItem("MARKET_ITEMS")),
-    itemNameList: JSON.parse(localStorage.getItem("MARKET_ITEMS_SIMPLE"))
+    itemNameList: JSON.parse(localStorage.getItem("MARKET_ITEMS_SIMPLE")),
+    contexts:{
+      sentItemComponentContext:null,
+      receivedItemComponentContext:null,
+      summaryDetailComponentContext:null,
+    }
   }, action) {
 
   switch (action.type) {
@@ -110,6 +115,30 @@ const mainReducer = function (
         apiErrorMsg: action.payload.error,
         time: new Date()
       };
+      case "SENT_ITEM_COMPONENT_CONTEXT_UPDATED":
+        return {
+          ...state,
+          contexts: {
+            ...state.contexts,
+            sentItemComponentContext:action.payload.sentItemComponentContext
+          }
+        };
+        case "RECEIVED_ITEM_COMPONENT_CONTEXT_UPDATED":
+        return {
+          ...state,
+          contexts: {
+            ...state.contexts,
+            receivedItemComponentContext:action.payload.receivedItemComponentContext
+          }
+        };
+        case "SUMMARY_DETAIL_COMPONENT_CONTEXT_UPDATED":
+        return {
+          ...state,
+          contexts: {
+            ...state.contexts,
+            summaryDetailComponentContext:action.payload.summaryDetailComponentContext
+          }
+        };
     default:
       return state;
   }

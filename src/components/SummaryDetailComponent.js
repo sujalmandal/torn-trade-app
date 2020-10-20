@@ -12,8 +12,10 @@ class SummaryDetailComponent extends Component {
             sent: this.props.sent,
             tradeSummary: this.props.tradeSummary,
             isSummaryDialogOpen: false,
-            showCopiedButtonName: false
+            showCopiedButtonName: false,
+            forceRecalculation: false
         }
+        props.updateContextInReduxStore(this);
     }
 
     toggleSummaryDialog = () => {
@@ -46,13 +48,6 @@ class SummaryDetailComponent extends Component {
                 console.error("failed to copy!");
             }
         );
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        console.log("BalanceDetailComponent updated()");
-        if ((this.props.received.total - this.props.sent.total) !== this.props.tradeSummary.balance) {
-            this.props.pushTradeSummary(this.props.received.total - this.props.sent.total);
-        }
     }
 
     render() {
@@ -172,8 +167,10 @@ const mapStateToProps = (reduxState) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        pushTradeSummary: (calculatedBalance) => {
-            dispatch({ type: "UPDATE_TRADE_SUMMARY", payload: { summary: { balance: calculatedBalance } } });
+        updateContextInReduxStore: (componentContext)=>{
+            dispatch({type:"SUMMARY_DETAIL_COMPONENT_CONTEXT_UPDATED",payload:{
+                summaryDetailComponentContext: componentContext
+            }});
         }
     }
 };
