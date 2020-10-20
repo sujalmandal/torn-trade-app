@@ -3,6 +3,7 @@ import InitialiserComponent from './components/InitialiserComponent'
 import ReceivedItemsComponent from './components/ReceivedItemsComponent'
 import SentItemsComponent from './components/SentItemsComponent'
 import SummaryDetailComponent from './components/SummaryDetailComponent'
+import FooterComponent from './components/FooterComponent'
 import { Container, Row, Col } from 'reactstrap';
 
 function App() {
@@ -17,6 +18,9 @@ function App() {
       </Row>
       <Row>
         <Col><SummaryDetailComponent/></Col>
+      </Row>
+      <Row>
+        <Col><FooterComponent/></Col>
       </Row>
     </Container>
   );
