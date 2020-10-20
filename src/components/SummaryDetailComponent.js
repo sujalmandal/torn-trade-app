@@ -111,7 +111,7 @@ class SummaryDetailComponent extends Component {
                                                 </div>
                                                 <div>
                                                 {this.props.sent.items.map((row) => {
-                                                    return <span>
+                                                    return <span key={row.id}>
                                                             <span style={{"font-weight":"bold"}}>{row.name}</span>
                                                             <span style={{"color":"blue"}}>{" x"+row.qty}</span>
                                                             {" at $"}
@@ -133,7 +133,7 @@ class SummaryDetailComponent extends Component {
                                                 </div>
                                                 <div>
                                                 {this.props.received.items.map((row) => {
-                                                    return <span>
+                                                    return <span key={row.id}>
                                                     <span style={{"font-weight":"bold"}}>{row.name}</span>
                                                     <span style={{"color":"blue"}}>{" x"+row.qty}</span>
                                                     {" at $"}
