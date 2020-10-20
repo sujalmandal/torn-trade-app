@@ -12,9 +12,14 @@ export const fetchAllItemMetaData = (apiKey) => {
           nameById: {}
         };
         Object.entries(res.data.items).forEach(([key, value]) => {
-          itemsStore.idByName[value.name] = parseInt(key);
-          itemsStore.nameById[parseInt(key)] = value.name;
-          itemNameList.push(value.name);
+          var itemId = parseInt(key);
+          var itemName = value.name;
+          var isIllegalItemName=itemName.toLowerCase().includes("undefined");
+          if(!isIllegalItemName){
+            itemsStore.idByName[itemName] = itemId;
+            itemsStore.nameById[itemId] = itemName;
+            itemNameList.push(itemName);
+          }
         });
         localStorage.setItem("MARKET_ITEMS", JSON.stringify(itemsStore))
         localStorage.setItem("MARKET_ITEMS_SIMPLE", JSON.stringify(itemNameList))

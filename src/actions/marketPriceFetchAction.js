@@ -9,21 +9,22 @@ export const fetchPrice = (apiKey, itemName, itemsStore, componentContext) => {
     var itemPricePromise = axios.get(itemPriceUrl);
     var bazaarPricePromise = axios.get(bazaarPriceUrl);
     Promise.all([itemPricePromise, bazaarPricePromise]).then((responses) => {
+      console.log(responses)
       var itemMarketListings = responses[0].data.itemmarket;
       var privateBazaarListings = responses[1].data.bazaar;
       var bestPriceAvailable = 0;
       var bestItemMarketPrice = 0;
       var bestPrivateBazaarPrice = 0;
-      if (itemMarketListings.length > 0 && itemMarketListings !== null && itemMarketListings[0].cost !== null) {
+      if (itemMarketListings !== null && itemMarketListings.length > 0 && itemMarketListings[0].cost !== null) {
         bestItemMarketPrice = itemMarketListings[0].cost;
       }
-      if (privateBazaarListings.length > 0 && privateBazaarListings !== null && privateBazaarListings[0].cost !== null) {
+      if (privateBazaarListings !== null && privateBazaarListings.length > 0 && privateBazaarListings[0].cost !== null) {
         bestPrivateBazaarPrice = privateBazaarListings[0].cost;
       }
 
       //best price out of bazaar & market
       bestPriceAvailable = bestPrivateBazaarPrice < bestItemMarketPrice ? bestPrivateBazaarPrice : bestItemMarketPrice;
-
+      
       dispatch({ type: 'MARKET_PRICE_FETCHED', payload: { "price": bestPriceAvailable, "itemName": itemName } });
 
       if (componentContext.state.type === "RECEIVED") {
