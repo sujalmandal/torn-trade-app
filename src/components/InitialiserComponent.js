@@ -9,7 +9,7 @@ import debugConsole from '../utils/ConsoleUtil'
 
 class InitialiserComponent extends Component {
 
-  REFRESH_INTERVAL=3000;
+  REFRESH_INTERVAL = 3000;
   constructor(props) {
     super(props)
     this.state = {
@@ -57,7 +57,7 @@ class InitialiserComponent extends Component {
           isRefreshing: false,
           currentItemNameForPriceRefresh: ""
         });
-      }, componentContext.REFRESH_INTERVAL * count);
+      }, componentContext.REFRESH_INTERVAL * (count + 1));
     });
   }
 
@@ -94,22 +94,24 @@ class InitialiserComponent extends Component {
     }
     return (
       <Container>
+        <br />
         <Row>
-          <hr></hr>
-        </Row>
-        <Row>
-          <Col><h4>Torn barter receipt generator</h4></Col>
+        <Col xs="auto"><h4>Torn trade receipt generator</h4></Col>
           <Col>
             <Input type="text" placeholder="Your API KEY goes here.." value={this.props.apiKey === null ? "" : this.props.apiKey} onChange={this.updateApiKey} />
           </Col>
           <Col>
-            <Button color={btnColor} onClick={() => { this.saveApiKeyAndInit() }}>{btnName}</Button>
-            &nbsp;&nbsp;&nbsp;
-            <Button color="info" onClick={this.refreshPrices}>Fetch Latest Prices</Button>
+            <Container>
+              <Row>
+                <Col>
+                  <Button color={btnColor} onClick={() => { this.saveApiKeyAndInit() }}>{btnName}</Button>
+                </Col>
+                <Col>
+                  <Button color="info" onClick={this.refreshPrices}>Fetch Latest Prices</Button>
+                </Col>
+              </Row>
+            </Container>
           </Col>
-        </Row>
-        <Row>
-          <hr></hr>
         </Row>
         <Row>
           <Modal isOpen={this.state.isRefreshing}>
@@ -123,6 +125,7 @@ class InitialiserComponent extends Component {
             </ModalFooter>
           </Modal>
         </Row>
+        <br />
       </Container>
     )
   }

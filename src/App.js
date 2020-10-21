@@ -5,22 +5,22 @@ import SentItemsComponent from './components/SentItemsComponent'
 import SummaryDetailComponent from './components/SummaryDetailComponent'
 import FooterComponent from './components/FooterComponent'
 import { Container, Row, Col } from 'reactstrap';
-
+import './css/common.css'
 function App() {
   return (
-    <Container>
+    <Container >
       <Row>
-        <Col><InitialiserComponent/></Col>
+        <InitialiserComponent/>
       </Row>
       <Row>
         <Col><ReceivedItemsComponent/></Col>
         <Col><SentItemsComponent/></Col>
       </Row>
       <Row>
-        <Col><SummaryDetailComponent/></Col>
+        <SummaryDetailComponent/>
       </Row>
       <Row>
-        <Col><FooterComponent/></Col>
+        <FooterComponent/>
       </Row>
     </Container>
   );

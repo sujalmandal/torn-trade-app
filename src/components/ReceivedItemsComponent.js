@@ -30,12 +30,12 @@ class ReceivedItemsComponent extends Component {
 
     render() {
         return (
-            <Container>
+            <Container >
                 <Row>
                     <Col><h4>Received</h4></Col>
                 </Row>
                 <Row>
-                    <Table id="receivedListTable">
+                    <Table id="receivedListTable" size="sm">
                         <thead>
                             <tr>
                                 <th>Item name</th>

@@ -35,7 +35,7 @@ class SentItemsComponent extends Component {
                     <Col><h4>Sent</h4></Col>
                 </Row>
                 <Row>
-                    <Table id="sentListTable">
+                    <Table id="sentListTable" size="sm">
                         <thead>
                             <tr>
                                 <th>Item name</th>
