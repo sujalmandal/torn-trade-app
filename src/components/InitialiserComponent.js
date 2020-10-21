@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import { Button } from "reactstrap";
-import { Input } from "reactstrap";
-import { Container, Row, Col } from 'reactstrap';
+import { Button, Input, Modal, ModalHeader, ModalBody, ModalFooter, Container, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 import { fetchAllItemMetaData } from "../actions/MarketItemsFetchAction"
 import { fetchPrice } from "../actions/MarketPriceFetchAction"
@@ -11,10 +9,13 @@ import debugConsole from '../utils/ConsoleUtil'
 
 class InitialiserComponent extends Component {
 
+  REFRESH_INTERVAL=3000;
   constructor(props) {
     super(props)
     this.state = {
-      apiKey: props.apiKey
+      apiKey: props.apiKey,
+      isRefreshing: false,
+      currentItemNameForPriceRefresh: ""
     }
   }
 
@@ -35,15 +36,42 @@ class InitialiserComponent extends Component {
   }
 
   refreshPrices = () => {
-    Object.keys(this.props.priceMap).forEach((itemName) => {
-      if (this.props.priceMap[itemName] !== 0) {
-        this.props.refreshItemPriceInReduxStore(
-          this.props.apiKey,
-          itemName,
-          this.props.itemsStore,
-          this
-          );
-      }
+    this.setState({
+      ...this.state,
+      isRefreshing: true
+    }, () => {
+      var componentContext = this;
+      var count = 0;
+      Object.keys(this.props.priceMap).forEach((itemName) => {
+        if (this.props.priceMap[itemName] !== 0) {
+          count++;
+          setTimeout(function () {
+            debugConsole("currently refreshing : " + itemName);
+            componentContext.refreshPrice(itemName);
+          }, componentContext.REFRESH_INTERVAL * count);
+        }
+      });
+      setTimeout(function () {
+        componentContext.setState({
+          ...componentContext.state,
+          isRefreshing: false,
+          currentItemNameForPriceRefresh: ""
+        });
+      }, componentContext.REFRESH_INTERVAL * count);
+    });
+  }
+
+  refreshPrice(itemName) {
+    this.setState({
+      ...this.state,
+      currentItemNameForPriceRefresh: itemName
+    }, () => {
+      this.props.refreshItemPriceInReduxStore(
+        this.props.apiKey,
+        itemName,
+        this.props.itemsStore,
+        this
+      );
     });
   }
 
@@ -82,6 +110,18 @@ class InitialiserComponent extends Component {
         </Row>
         <Row>
           <hr></hr>
+        </Row>
+        <Row>
+          <Modal isOpen={this.state.isRefreshing}>
+            <ModalHeader>Please wait</ModalHeader>
+            <ModalBody>
+              {this.state.currentItemNameForPriceRefresh === "" ?
+                <h6>Calling Torn API..</h6> :
+                <h6>Fetching the latest price of {this.state.currentItemNameForPriceRefresh}..</h6>}
+            </ModalBody>
+            <ModalFooter>
+            </ModalFooter>
+          </Modal>
         </Row>
       </Container>
     )
