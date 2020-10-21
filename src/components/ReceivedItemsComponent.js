@@ -32,7 +32,7 @@ class ReceivedItemsComponent extends Component {
         return (
             <Container >
                 <Row>
-                    <Col><h4>Received</h4></Col>
+                    &nbsp;<h5>Received</h5>
                 </Row>
                 <Row>
                     <Table id="receivedListTable" size="sm">
@@ -42,7 +42,7 @@ class ReceivedItemsComponent extends Component {
                                 <th>Quantity</th>
                                 <th>Best Price</th>
                                 <th>Total Price</th>
-                                <th>Action</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -58,8 +58,8 @@ class ReceivedItemsComponent extends Component {
                                         <td>
                                             <div>
                                                 <ButtonGroup>
-                                                    <Button color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInReceivedItems(this) }}>+</Button>
-                                                    <Button color="danger" disabled={this.state.rows.length === 1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromReceivedItems(row, this) }}>-</Button>
+                                                    <Button size="sm" color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInReceivedItems(this) }}>+</Button>
+                                                    <Button size="sm" color="danger" disabled={this.state.rows.length === 1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromReceivedItems(row, this) }}>-</Button>
                                                 </ButtonGroup>
                                             </div>
                                         </td>

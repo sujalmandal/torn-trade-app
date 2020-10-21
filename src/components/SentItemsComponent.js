@@ -32,7 +32,7 @@ class SentItemsComponent extends Component {
         return (
             <Container>
                 <Row>
-                    <Col><h4>Sent</h4></Col>
+                &nbsp;<h5>Sent</h5>
                 </Row>
                 <Row>
                     <Table id="sentListTable" size="sm">
@@ -40,9 +40,10 @@ class SentItemsComponent extends Component {
                             <tr>
                                 <th>Item name</th>
                                 <th>Quantity</th>
-                                <th>Best Price</th>
+                                <th>Price</th>
                                 <th>Total Price</th>
-                                <th>Action</th>
+                                <th style={{width:"10%"}}>Profit</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,13 +56,12 @@ class SentItemsComponent extends Component {
                                         <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event) => { updateQtyInSentItems(event, this) }} min={0} /></td>
                                         <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
                                         <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
+                                        <td><Input type="number" min={0} max={99} placeholder="%"></Input></td>
                                         <td>
-                                            <div>
                                                 <ButtonGroup>
-                                                    <Button color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInSentItems(this) }}>+</Button>
-                                                    <Button color="danger" disabled={this.state.rows.length === 1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromSentItems(row, this) }}>-</Button>
+                                                    <Button size="sm" color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInSentItems(this) }}>+</Button>
+                                                    <Button size="sm" color="danger" disabled={this.state.rows.length === 1 || isItemListNotInitialised(this.props)} onClick={() => { removeRowFromSentItems(row, this) }}>-</Button>
                                                 </ButtonGroup>
-                                            </div>
                                         </td>
                                     </tr>
                                 );
