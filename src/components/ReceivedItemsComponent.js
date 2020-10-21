@@ -97,7 +97,7 @@ const mapDispatchToProps = dispatch => {
         },
 
         updateReceivedItemsData: (apiKey, itemName, itemsStore, componentContext, updatesCallback) => {
-            dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, updatesCallback));
+            dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, false, updatesCallback));
         },
 
         pushReceivedItemsDetail: (items, totalPrice) => {

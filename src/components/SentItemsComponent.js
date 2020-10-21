@@ -86,6 +86,7 @@ const mapStateToProps = (reduxState) => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        
         updateContextInReduxStore: (componentContext) => {
             dispatch({
                 type: "SENT_ITEM_COMPONENT_CONTEXT_UPDATED", payload: {
@@ -95,7 +96,7 @@ const mapDispatchToProps = dispatch => {
         },
 
         updateSentItemsData: (apiKey, itemName, itemsStore, componentContext, updatesCallback) => {
-            dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, updatesCallback));
+            dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, false, updatesCallback));
         },
 
         pushSentItemDetails: (items, totalPrice) => {
@@ -108,6 +109,7 @@ const mapDispatchToProps = dispatch => {
                 }
             });
         },
+
         pushTradeSummary: (calculatedBalance) => {
             dispatch({ type: "UPDATE_TRADE_SUMMARY", payload: { summary: { balance: calculatedBalance } } });
         }

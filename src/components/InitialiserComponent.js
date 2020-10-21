@@ -4,7 +4,10 @@ import { Input } from "reactstrap";
 import { Container, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 import { fetchAllItemMetaData } from "../actions/MarketItemsFetchAction"
+import { fetchPrice } from "../actions/MarketPriceFetchAction"
 import { fetchUserName } from "../actions/ProfileDetailsFetchAction"
+import { triggerSentItemsDataUpdates, triggerReceivedItemsDataUpdates } from '../helpers/ItemsComponentHelper'
+import debugConsole from '../utils/ConsoleUtil'
 
 class InitialiserComponent extends Component {
 
@@ -22,20 +25,24 @@ class InitialiserComponent extends Component {
 
   saveApiKeyAndInit = () => {
     if (!localStorage.getItem("MARKET_ITEMS")) {
-      console.log("item details not found in cache; thus, calling the items api now!");
+      debugConsole("item details not found in cache; thus, calling the items api now!");
       this.props.updateMarketItemDetailsInReduxStore(this.state.apiKey);
       this.props.updateUserNameInReduxStore(this.state.apiKey);
     }
     else {
-      console.log("item details already present");
+      debugConsole("item details already present");
     }
   }
 
   refreshPrices = () => {
-    Object.keys(this.props.priceMap).forEach((itemName)=>{
-      if(this.props.priceMap[itemName]!==0){
-        this.props.refreshItemPriceInReduxStore(itemName,9999);
-        
+    Object.keys(this.props.priceMap).forEach((itemName) => {
+      if (this.props.priceMap[itemName] !== 0) {
+        this.props.refreshItemPriceInReduxStore(
+          this.props.apiKey,
+          itemName,
+          this.props.itemsStore,
+          this
+          );
       }
     });
   }
@@ -99,8 +106,14 @@ const mapDispatchToProps = (dispatch) => {
     updateUserNameInReduxStore: function (apiKey) {
       dispatch(fetchUserName(apiKey));
     },
-    refreshItemPriceInReduxStore: function(itemName,price){
-      dispatch({ type: 'MARKET_PRICE_FETCHED', payload: { "price": price, "itemName": itemName } });
+    refreshItemPriceInReduxStore: function (apiKey, itemName, itemsStore, componentContext) {
+      dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, true,
+        // updates to fire after price has been fetched
+        () => {
+          triggerReceivedItemsDataUpdates(componentContext.props.contexts.receivedItemComponentContext);
+          triggerSentItemsDataUpdates(componentContext.props.contexts.sentItemComponentContext);
+        }
+      ));
     }
   }
 };

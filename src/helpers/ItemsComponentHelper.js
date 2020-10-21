@@ -108,8 +108,8 @@ export function updateQtyInSentItems(event, componentContext) {
     triggerSentItemsDataUpdates(componentContext);
 }
 
-//internal functions
-function triggerSentItemsDataUpdates(componentContext) {
+//updates
+export function triggerSentItemsDataUpdates(componentContext) {
     var updatedTotal = getTotalPrice(
         componentContext.state.rows,
         componentContext.props.itemNameList,
@@ -128,7 +128,7 @@ function triggerSentItemsDataUpdates(componentContext) {
     componentContext.props.pushTradeSummary(componentContext.props.received.total - updatedTotal);
 }
 
-function triggerReceivedItemsDataUpdates(componentContext) {
+export function triggerReceivedItemsDataUpdates(componentContext) {
     var updatedTotal = getTotalPrice(
         componentContext.state.rows,
         componentContext.props.itemNameList,

@@ -1,12 +1,14 @@
 import axios from 'axios';
+import debugConsole from '../utils/ConsoleUtil'
 
-export const fetchPrice = (apiKey, itemName, itemsStore, componentContext,updatesCallback) => {
+export const fetchPrice = (apiKey, itemName, itemsStore, componentContext, forceApiCall, updatesCallback) => {
   return (dispatch) => {
     var itemId = itemsStore.idByName[itemName];
     var itemPriceUrl = "https://api.torn.com/market/" + itemId + "?selections=itemmarket&key=" + apiKey;
     var bazaarPriceUrl = "https://api.torn.com/market/" + itemId + "?selections=bazaar&key=" + apiKey;
-    var cachedBestPriceForItem=componentContext.props.priceMap[itemName];
-    if(cachedBestPriceForItem===0){
+    var cachedBestPriceForItem = componentContext.props.priceMap[itemName];
+    if (cachedBestPriceForItem === 0 || forceApiCall) {
+      debugConsole("prices to be fetched from the API");
       var itemPricePromise = axios.get(itemPriceUrl);
       var bazaarPricePromise = axios.get(bazaarPriceUrl);
       Promise.all([itemPricePromise, bazaarPricePromise]).then((responses) => {
@@ -21,12 +23,12 @@ export const fetchPrice = (apiKey, itemName, itemsStore, componentContext,update
         if (privateBazaarListings !== null && privateBazaarListings.length > 0 && privateBazaarListings[0].cost !== null) {
           bestPrivateBazaarPrice = privateBazaarListings[0].cost;
         }
-  
+
         //best price out of bazaar & market
         bestPriceAvailable = bestPrivateBazaarPrice < bestItemMarketPrice ? bestPrivateBazaarPrice : bestItemMarketPrice;
-        
-        pushPriceAndRowDetailsInReduxStore(itemName,bestPriceAvailable,dispatch,updatesCallback);
-  
+
+        pushPriceAndRowDetailsInReduxStore(itemName, bestPriceAvailable, dispatch, updatesCallback);
+
       }).catch((errs) => {
         console.error(JSON.stringify(errs));
         errs.forEach(err => {
@@ -34,9 +36,9 @@ export const fetchPrice = (apiKey, itemName, itemsStore, componentContext,update
         });
       });
     }
-    else{
-      console.log("price for "+itemName+" is already fetched, value="+cachedBestPriceForItem);
-      pushPriceAndRowDetailsInReduxStore(itemName,cachedBestPriceForItem,dispatch,updatesCallback);
+    else {
+      debugConsole("price for " + itemName + " is already fetched, value = " + cachedBestPriceForItem);
+      pushPriceAndRowDetailsInReduxStore(itemName, cachedBestPriceForItem, dispatch, updatesCallback);
     }
   };
 };
@@ -49,7 +51,7 @@ const failed = (error) => ({
   }
 });
 
-function pushPriceAndRowDetailsInReduxStore(itemName,bestPriceAvailable,dispatch,updatesCallback){
+function pushPriceAndRowDetailsInReduxStore(itemName, bestPriceAvailable, dispatch, updatesCallback) {
   dispatch({ type: 'MARKET_PRICE_FETCHED', payload: { "price": bestPriceAvailable, "itemName": itemName } });
   //execute the updates after the price has been fetched
   updatesCallback();
