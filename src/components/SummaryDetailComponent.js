@@ -97,49 +97,51 @@ class SummaryDetailComponent extends Component {
                                         (
                                             <div id="summaryText">
                                                 <div>
-                                                    <span>
-                                                        {this.props.tradeSummary.yourName}
-                                                        {" sent the following items, "}
-                                                        {"worth $" + this.props.sent.total+" in total"}
-                                                    </span>
-                                                    <br/><span>--------------------------------------------------------------------</span>
-                                                </div>
-                                                <div>
-                                                {this.props.sent.items.map((row) => {
-                                                    return <span key={row.id}>
-                                                            <span style={{"font-weight":"bold"}}>{row.name}</span>
-                                                            <span style={{"color":"blue"}}>{" x"+row.qty}</span>
-                                                            {" at $"}
-                                                            <span style={{"color":"green"}}>{row.mPrice}</span>
-                                                            {"  each, $"}
-                                                            <span style={{"color":"green"}}>{row.tPrice}</span>
-                                                            {" in total"}<br/>
-                                                            </span>
-                                                })}
-                                                </div>
-                                                <span><br/></span>
-                                                <div>
-                                                    <span>
+                                                    <span style={{ "textDecoration": "underline" }}>
                                                         {this.props.tradeSummary.yourName}
                                                         {" received the following items, "}
-                                                        {"worth $" + this.props.received.total+" in total"}
+                                                        {"worth $" + this.props.received.total + " in total"}
                                                     </span>
-                                                    <br/><span>--------------------------------------------------------------------</span>
+                                                    <br />
                                                 </div>
                                                 <div>
-                                                {this.props.received.items.map((row) => {
-                                                    return <span key={row.id}>
-                                                    <span style={{"font-weight":"bold"}}>{row.name}</span>
-                                                    <span style={{"color":"blue"}}>{" x"+row.qty}</span>
-                                                    {" at $"}
-                                                    <span style={{"color":"green"}}>{row.mPrice}</span>
-                                                    {"  each, $"}
-                                                    <span style={{"color":"green"}}>{row.tPrice}</span>
-                                                    {" in total"}<br/>
-                                                    </span>
-                                                })}
+                                                    {this.props.received.items.map((row) => {
+                                                        return <span key={row.id}>
+                                                            <span style={{ "fontWeight": "bold" }}>{row.name}</span>
+                                                            <span style={{ "color": "blue" }}>{" x" + row.qty}</span>
+                                                            {" at $"}
+                                                            <span style={{ "color": "green" }}>{row.mPrice}</span>
+                                                            {"  each, $"}
+                                                            <span style={{ "color": "green" }}>{row.tPrice}</span>
+                                                            {" in total"}<br />
+                                                        </span>
+                                                    })}
                                                 </div>
-                                                <span style={{"font-weight":"bold"}}>{balanceText}</span>
+                                                <span><br /></span>
+
+                                                <div>
+                                                    <span style={{ "textDecoration": "underline" }}>
+                                                        {this.props.tradeSummary.yourName}
+                                                        {" sent the following items, "}
+                                                        {"worth $" + this.props.sent.total + " in total"}
+                                                    </span>
+                                                    <br />
+                                                </div>
+                                                <div>
+                                                    {this.props.sent.items.map((row) => {
+                                                        return <span key={row.id}>
+                                                            <span style={{ "fontWeight": "bold" }}>{row.name}</span>
+                                                            <span style={{ "color": "blue" }}>{" x" + row.qty}</span>
+                                                            {" at $"}
+                                                            <span style={{ "color": "green" }}>{row.mPrice}</span>
+                                                            {"  each, $"}
+                                                            <span style={{ "color": "green" }}>{row.tPrice}</span>
+                                                            {" in total"}<br />
+                                                        </span>
+                                                    })}
+                                                </div>
+                                                <span>----------------</span><br/>
+                                                <span style={{ "fontWeight": "bold" }}>{balanceText}</span>
                                             </div>
                                         )}
                                 </ModalBody>
@@ -167,10 +169,12 @@ const mapStateToProps = (reduxState) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateContextInReduxStore: (componentContext)=>{
-            dispatch({type:"SUMMARY_DETAIL_COMPONENT_CONTEXT_UPDATED",payload:{
-                summaryDetailComponentContext: componentContext
-            }});
+        updateContextInReduxStore: (componentContext) => {
+            dispatch({
+                type: "SUMMARY_DETAIL_COMPONENT_CONTEXT_UPDATED", payload: {
+                    summaryDetailComponentContext: componentContext
+                }
+            });
         }
     }
 };
