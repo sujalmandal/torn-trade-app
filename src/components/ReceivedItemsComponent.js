@@ -8,7 +8,12 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
 import { fetchPrice } from '../actions/MarketPriceFetchAction'
-import { isCurrentRowEmpty, isItemListNotInitialised, refinedOptions } from '../utils/ItemRowUtil'
+import { 
+    isCurrentRowEmpty, 
+    isItemListNotInitialised, 
+    refinedOptions,
+    getFormattedCurrency 
+} from '../utils/ItemRowUtil'
 import {
     updateTypeAheadSelectedName,
     addRowInReceivedItems,
@@ -17,11 +22,14 @@ import {
 } from '../helpers/ItemsComponentHelper'
 
 class ReceivedItemsComponent extends Component {
+
+    
+
     constructor(props) {
         super(props);
         this.state = {
             totalPrice: this.props.received.total,
-            totalActualPrice: this.props.received.totalActual,
+            totalActualPrice: this.props.received.totalActualPrice,
             rows: this.props.received.items,
             forceRecalculation: false,
             type: "RECEIVED"
@@ -75,8 +83,8 @@ class ReceivedItemsComponent extends Component {
                     </Table>
                 </Row>
                 <Row>
-                    <Col>Total market price: {this.state.totalPrice}</Col>
-                    <Col>Total price after profits: {this.state.totalActualPrice}</Col>
+                    <Col>Total market price: {getFormattedCurrency(this.state.totalPrice)}</Col>
+                    <Col>Total price after profits: {getFormattedCurrency(this.state.totalActualPrice)}</Col>
                 </Row>
             </>
         )

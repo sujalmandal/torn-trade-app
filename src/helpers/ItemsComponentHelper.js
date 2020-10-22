@@ -127,7 +127,7 @@ export function triggerSentItemsDataUpdates(componentContext) {
     //update the received items in redux's global store
     componentContext.props.pushSentItemDetails(updatedRows, updatedTotal);
     //update the summary details in redux's global store
-    componentContext.props.pushTradeSummary(componentContext.props.received.total - updatedTotal);
+    componentContext.props.pushTradeSummary(componentContext.props.received.totalActualPrice - updatedTotal);
 }
 
 export function triggerReceivedItemsDataUpdates(componentContext) {

@@ -1,10 +1,11 @@
 import React, { Component } from "react"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Container, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
-import { sentAndReceivedItemsEmpty } from '../utils/ItemRowUtil'
+import { sentAndReceivedItemsEmpty,getFormattedCurrency} from '../utils/ItemRowUtil'
 import * as clipboard from "clipboard-polyfill/text";
 
 class SummaryDetailComponent extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -63,12 +64,12 @@ class SummaryDetailComponent extends Component {
         }
         //user received less
         if (this.props.tradeSummary.balance < 0) {
-            balanceText = this.props.tradeSummary.yourName + " gets $" + this.props.tradeSummary.balance + ".";
+            balanceText = this.props.tradeSummary.yourName + " gets " + getFormattedCurrency(this.props.tradeSummary.balance) + ".";
         }
         //user received more
         else if (this.props.tradeSummary.balance > 0) {
             balanceColor = "red";
-            balanceText = this.props.tradeSummary.yourName + " needs to send an additional $" + this.props.tradeSummary.balance + ".";
+            balanceText = this.props.tradeSummary.yourName + " needs to send an additional " + getFormattedCurrency(this.props.tradeSummary.balance) + ".";
         }
         //balanced
         else if (this.props.tradeSummary.balance === 0) {
@@ -100,7 +101,7 @@ class SummaryDetailComponent extends Component {
                                                     <span style={{ "textDecoration": "underline" }}>
                                                         {this.props.tradeSummary.yourName}
                                                         {" received the following items, "}
-                                                        {"worth $" + this.props.received.total + " in total"}
+                                                        {"worth " + getFormattedCurrency(this.props.received.totalActualPrice) + " in total"}
                                                     </span>
                                                     <br />
                                                 </div>
@@ -109,10 +110,10 @@ class SummaryDetailComponent extends Component {
                                                         return <span key={row.id}>
                                                             <span style={{ "fontWeight": "bold" }}>{row.name}</span>
                                                             <span style={{ "color": "blue" }}>{" x" + row.qty}</span>
-                                                            {" at $"}
-                                                            <span style={{ "color": "green" }}>{row.mPrice}</span>
-                                                            {"  each, $"}
-                                                            <span style={{ "color": "green" }}>{row.tPrice}</span>
+                                                            {" at "}
+                                                            <span style={{ "color": "green" }}>{getFormattedCurrency(row.mPrice)}</span>
+                                                            {"  each, "}
+                                                            <span style={{ "color": "green" }}>{getFormattedCurrency(row.tPrice)}</span>
                                                             {" in total"}<br />
                                                         </span>
                                                     })}
@@ -123,7 +124,7 @@ class SummaryDetailComponent extends Component {
                                                     <span style={{ "textDecoration": "underline" }}>
                                                         {this.props.tradeSummary.yourName}
                                                         {" sent the following items, "}
-                                                        {"worth $" + this.props.sent.total + " in total"}
+                                                        {"worth " + getFormattedCurrency(this.props.sent.total) + " in total"}
                                                     </span>
                                                     <br />
                                                 </div>
@@ -132,10 +133,10 @@ class SummaryDetailComponent extends Component {
                                                         return <span key={row.id}>
                                                             <span style={{ "fontWeight": "bold" }}>{row.name}</span>
                                                             <span style={{ "color": "blue" }}>{" x" + row.qty}</span>
-                                                            {" at $"}
-                                                            <span style={{ "color": "green" }}>{row.mPrice}</span>
-                                                            {"  each, $"}
-                                                            <span style={{ "color": "green" }}>{row.tPrice}</span>
+                                                            {" at "}
+                                                            <span style={{ "color": "green" }}>{getFormattedCurrency(row.mPrice)}</span>
+                                                            {"  each, "}
+                                                            <span style={{ "color": "green" }}>{getFormattedCurrency(row.tPrice)}</span>
                                                             {" in total"}<br />
                                                         </span>
                                                     })}

@@ -1,5 +1,8 @@
 import { IdGenerator } from './IdGeneratorUtil'
 
+
+let usdFormatter=new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+
 export function areRowsEmpty(rows) {
     var isEmpty = false;
     rows.forEach(row => {
@@ -48,4 +51,8 @@ export function getEmptySentRow(){
 
 export function getEmptyReceivedRow(){
     return { id: IdGenerator(), name: "", qty: 0, profitPercent:0, mPrice: 0, tPrice: 0, actualPrice:0,actualTotalPrice:0 };
+}
+
+export function getFormattedCurrency(number){
+   return usdFormatter.format(number);
 }
