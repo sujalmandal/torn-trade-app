@@ -40,8 +40,8 @@ class SentItemsComponent extends Component {
                         <tr style={{"fontSize":"0.85rem"}}>
                                 <th>Item name</th>
                                 <th style={{width:"15%"}}>Qty</th>
-                                <th>Price</th>
-                                <th>Total Price</th>
+                                <th>Market Price</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>

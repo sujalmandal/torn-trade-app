@@ -17,12 +17,12 @@ const mainReducer = function (
     apiKey: localStorage.getItem("API_KEY"),
     received: {
       items: [getEmptyReceivedRow()],
-      total: 0
+      total: 0,
+      totalActualPrice: 0
     },
     sent: {
       items: [getEmptySentRow()],
-      total: 0,
-      totalAfterProfit:0
+      total: 0
     },
     tradeSummary: {
       yourName: localStorage.getItem("YOUR_NAME"),

@@ -2,6 +2,7 @@ import { getEmptySentRow,getEmptyReceivedRow } from '../utils/ItemRowUtil'
 import { 
     getUpdatedRowData,
     getTotalPrice,
+    getTotalPriceWithProfit,
     getUpdatedRowDataWithProfit,
  } from '../utils/PriceCalculatorUtil'
 
@@ -116,7 +117,7 @@ export function triggerSentItemsDataUpdates(componentContext) {
         componentContext.props.itemNameList,
         componentContext.props.priceMap
     );
-    var updatedRows = getUpdatedRowDataWithProfit(
+    var updatedRows = getUpdatedRowData(
         componentContext.state.rows,
         componentContext.props.itemNameList,
         componentContext.props.priceMap
@@ -135,24 +136,29 @@ export function triggerReceivedItemsDataUpdates(componentContext) {
         componentContext.props.itemNameList,
         componentContext.props.priceMap
     );
-    var updatedRows = getUpdatedRowData(
+    var updatedTotalActual = getTotalPriceWithProfit(
+        componentContext.state.rows,
+        componentContext.props.itemNameList,
+        componentContext.props.priceMap
+    );
+    var updatedRows = getUpdatedRowDataWithProfit(
         componentContext.state.rows,
         componentContext.props.itemNameList,
         componentContext.props.priceMap
     );
     //update the component's local variables that are mapped to the UI elements
-    updateLocalState(componentContext, updatedRows,updatedTotal);
+    updateLocalState(componentContext, updatedRows,updatedTotal, updatedTotalActual);
     //update the received items in redux's global store
-    componentContext.props.pushReceivedItemsDetail(updatedRows, updatedTotal);
+    componentContext.props.pushReceivedItemsDetail(updatedRows, updatedTotal, updatedTotalActual);
     //update the summary details in redux's global store
-    componentContext.props.pushTradeSummary(updatedTotal - componentContext.props.sent.total);
+    componentContext.props.pushTradeSummary(updatedTotalActual - componentContext.props.sent.total);
 }
 
 function updateLocalState(componentContext, updatedRows, updatedTotal, totalPriceAfterProfit) {
     if(totalPriceAfterProfit){
         componentContext.setState({
             ...componentContext.state,
-            totalAfterProfit: totalPriceAfterProfit,
+            totalActualPrice: totalPriceAfterProfit,
             totalPrice: updatedTotal,
             rows: updatedRows
         });

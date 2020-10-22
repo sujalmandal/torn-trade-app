@@ -21,6 +21,7 @@ class ReceivedItemsComponent extends Component {
         super(props);
         this.state = {
             totalPrice: this.props.received.total,
+            totalActualPrice: this.props.received.totalActual,
             rows: this.props.received.items,
             forceRecalculation: false,
             type: "RECEIVED"
@@ -74,7 +75,8 @@ class ReceivedItemsComponent extends Component {
                     </Table>
                 </Row>
                 <Row>
-                    <Col>Total market price of items received: {this.state.totalPrice}</Col>
+                    <Col>Total market price: {this.state.totalPrice}</Col>
+                    <Col>Total price after profits: {this.state.totalActualPrice}</Col>
                 </Row>
             </>
         )
@@ -104,12 +106,13 @@ const mapDispatchToProps = dispatch => {
             dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, false, updatesCallback));
         },
 
-        pushReceivedItemsDetail: (items, totalPrice) => {
+        pushReceivedItemsDetail: (items, totalPrice, totalActualPrice) => {
             dispatch({
                 type: 'UPDATE_RECEIVED_ITEMS', payload: {
                     received: {
                         items: items,
-                        total: totalPrice
+                        total: totalPrice,
+                        totalActualPrice: totalActualPrice
                     }
                 }
             });
