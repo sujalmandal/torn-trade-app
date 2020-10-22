@@ -56,3 +56,18 @@ export function getEmptyReceivedRow(){
 export function getFormattedCurrency(number){
    return usdFormatter.format(number);
 }
+
+export function getAllItemsAddedInTrade(reduxStore){
+    var itemNames=new Set();
+    reduxStore.received.items.forEach((row)=>{
+        if(row.name!==""){
+            itemNames.add(row.name);
+        }
+    });
+    reduxStore.sent.items.forEach((row)=>{
+        if(row.name!==""){
+            itemNames.add(row.name);
+        }
+    });
+    return itemNames;
+}

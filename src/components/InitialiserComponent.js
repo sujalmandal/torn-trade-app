@@ -6,6 +6,7 @@ import { fetchPrice } from "../actions/MarketPriceFetchAction"
 import { fetchUserName } from "../actions/ProfileDetailsFetchAction"
 import { triggerSentItemsDataUpdates, triggerReceivedItemsDataUpdates } from '../helpers/ItemsComponentHelper'
 import debugConsole from '../utils/ConsoleUtil'
+import { getAllItemsAddedInTrade } from '../utils/ItemRowUtil'
 
 class InitialiserComponent extends Component {
 
@@ -42,7 +43,7 @@ class InitialiserComponent extends Component {
     }, () => {
       var componentContext = this;
       var count = 0;
-      Object.keys(this.props.priceMap).forEach((itemName) => {
+      getAllItemsAddedInTrade(this.props).forEach((itemName) => {
         if (this.props.priceMap[itemName] !== 0) {
           count++;
           setTimeout(function () {
@@ -96,7 +97,7 @@ class InitialiserComponent extends Component {
       <Container>
         <br />
         <Row>
-        <Col xs="auto"><h4>Torn trade receipt generator</h4></Col>
+          <Col xs="auto"><h4>Torn trade receipt generator</h4></Col>
           <Col>
             <Input type="text" placeholder="Your API KEY goes here.." value={this.props.apiKey === null ? "" : this.props.apiKey} onChange={this.updateApiKey} />
           </Col>
