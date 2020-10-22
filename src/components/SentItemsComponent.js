@@ -3,7 +3,7 @@
 import React, { Component } from "react"
 import { connect } from 'react-redux';
 /* UI element imports */
-import { Input, Container, Row, Col, Table, Button, ButtonGroup } from "reactstrap"
+import { Input, Row, Col, Table, Button, ButtonGroup } from "reactstrap"
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
@@ -30,20 +30,18 @@ class SentItemsComponent extends Component {
 
     render() {
         return (
-            <Container>
+            <>
                 <Row>
                 &nbsp;<h5>Sent</h5>
                 </Row>
                 <Row>
                     <Table id="sentListTable" size="sm">
                         <thead>
-                            <tr>
+                        <tr style={{"fontSize":"0.85rem"}}>
                                 <th>Item name</th>
-                                <th>Quantity</th>
+                                <th style={{width:"15%"}}>Qty</th>
                                 <th>Price</th>
                                 <th>Total Price</th>
-                                <th style={{width:"15%"}}>Profit %</th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,9 +52,8 @@ class SentItemsComponent extends Component {
                                             <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={refinedOptions(this.props, this.state.rows)} />
                                         </td>
                                         <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event) => { updateNumericInputInSentItems(event, this) }} min={0} /></td>
-                                        <td><Input type="number" name={"actualPrice_" + row.id} value={row.actualPrice} disabled={true} /></td>
-                                        <td><Input type="number" name={"actualTotalPrice_" + row.id} value={row.actualTotalPrice} disabled={true} /></td>
-                                        <td><Input type="number" name={"itemProfit_" + row.id} min={0} max={99} value={row.itemProfit} placeholder="%" onChange={(event) => { updateNumericInputInSentItems(event, this)}}></Input></td>
+                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true}/></td>
+                                        <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true}/></td>
                                         <td>
                                                 <ButtonGroup>
                                                     <Button size="sm" color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInSentItems(this) }}>+</Button>
@@ -72,7 +69,7 @@ class SentItemsComponent extends Component {
                 <Row>
                     <Col>Total market price of items sent: {this.state.totalPrice}</Col>
                 </Row>
-            </Container>
+            </>
         )
     }
 }

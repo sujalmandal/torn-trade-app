@@ -3,7 +3,7 @@
 import React, { Component } from "react"
 import { connect } from 'react-redux';
 /* UI element imports */
-import { Input, Container, Row, Col, Table, Button, ButtonGroup } from "reactstrap"
+import { Input, Row, Col, Table, Button, ButtonGroup } from "reactstrap"
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
@@ -13,7 +13,7 @@ import {
     updateTypeAheadSelectedName,
     addRowInReceivedItems,
     removeRowFromReceivedItems,
-    updateQtyInReceivedItems
+    updateNumericInputInReceivedItems
 } from '../helpers/ItemsComponentHelper'
 
 class ReceivedItemsComponent extends Component {
@@ -30,18 +30,20 @@ class ReceivedItemsComponent extends Component {
 
     render() {
         return (
-            <Container >
+            <>
                 <Row>
                     &nbsp;<h5>Received</h5>
                 </Row>
                 <Row>
                     <Table id="receivedListTable" size="sm">
                         <thead>
-                            <tr>
+                            <tr style={{"fontSize":"0.85rem"}}>
                                 <th>Item name</th>
-                                <th>Quantity</th>
-                                <th>Best Price</th>
-                                <th>Total Price</th>
+                                <th style={{width:"12%"}}>Qty</th>
+                                <th>Market Price</th>
+                                <th>Your Price</th>
+                                <th>Total</th>
+                                <th style={{width:"10%"}}>Profit %</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -52,9 +54,11 @@ class ReceivedItemsComponent extends Component {
                                         <td>
                                             <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={refinedOptions(this.props, this.state.rows)} />
                                         </td>
-                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event) => { updateQtyInReceivedItems(event, this) }} min={0} /></td>
-                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
-                                        <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
+                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(e) => { updateNumericInputInReceivedItems(e, this) }} min={0} /></td>
+                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true}/></td>
+                                        <td><Input type="number" name={"actualPrice_" + row.id} value={row.actualPrice} disabled={true}/></td>
+                                        <td><Input type="number" name={"actualTotalPrice_" + row.id} value={row.actualTotalPrice} disabled={true}/></td>
+                                        <td><Input type="number" name={"profitPercent_" + row.id} value={row.profitPercent} onChange={(e)=>{updateNumericInputInReceivedItems(e,this)}} /></td>
                                         <td>
                                             <div>
                                                 <ButtonGroup>
@@ -72,7 +76,7 @@ class ReceivedItemsComponent extends Component {
                 <Row>
                     <Col>Total market price of items received: {this.state.totalPrice}</Col>
                 </Row>
-            </Container>
+            </>
         )
     }
 

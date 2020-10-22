@@ -13,9 +13,10 @@ function App() {
         <InitialiserComponent/>
       </Row>
       <Row>
-        <Col><ReceivedItemsComponent/></Col>
-        <Col><SentItemsComponent/></Col>
+        <Col xs="7"><ReceivedItemsComponent/></Col>
+        <Col xs="5"><SentItemsComponent/></Col>
       </Row>
+      <hr/>
       <Row>
         <SummaryDetailComponent/>
       </Row>

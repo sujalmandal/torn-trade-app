@@ -39,10 +39,12 @@ export function getUpdatedRowDataWithProfit(rows,itemNamesList,priceMap){
 
 export function getTotalPriceWithProfit(rows,itemNamesList,priceMap){
     var totalPrice=0;
+    var totalPriceAfterProfit=0;
     rows.forEach((row)=>{
         if(itemNamesList.includes(row.name)){
             totalPrice+=priceMap[row.name]*row.qty;
+            totalPriceAfterProfit=totalPrice-((totalPrice*row.itemProfit)/100);
         }
     });
-    return totalPrice;
+    return totalPriceAfterProfit;
 }

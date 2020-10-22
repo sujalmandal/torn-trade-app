@@ -43,9 +43,9 @@ export function isItemListNotInitialised(props){
 }
 
 export function getEmptySentRow(){
-    return { id: IdGenerator(), name: "", qty: 0, itemProfit:0, mPrice: 0, tPrice: 0, actualPrice:0,actualTotalPrice:0 };
+    return { id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 };
 }
 
 export function getEmptyReceivedRow(){
-    return { id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 };
+    return { id: IdGenerator(), name: "", qty: 0, profitPercent:0, mPrice: 0, tPrice: 0, actualPrice:0,actualTotalPrice:0 };
 }

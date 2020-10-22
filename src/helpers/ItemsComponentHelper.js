@@ -3,7 +3,6 @@ import {
     getUpdatedRowData,
     getTotalPrice,
     getUpdatedRowDataWithProfit,
-    getTotalPriceWithProfit
  } from '../utils/PriceCalculatorUtil'
 
 /* methods common for both SentItemsComponent & ReceivedItemsComponent */
@@ -68,7 +67,7 @@ export function removeRowFromReceivedItems(currentRow, componentContext) {
     triggerReceivedItemsDataUpdates(componentContext);
 }
 
-export function updateQtyInReceivedItems(event, componentContext) {
+export function updateNumericInputInReceivedItems(event, componentContext) {
     var fieldName = event.target.name.split("_")[0];
     var rowId = event.target.name.split("_")[1];
     var value = event.target.value;
@@ -112,7 +111,7 @@ export function updateNumericInputInSentItems(event, componentContext) {
 
 //updates
 export function triggerSentItemsDataUpdates(componentContext) {
-    var updatedTotal = getTotalPriceWithProfit(
+    var updatedTotal = getTotalPrice(
         componentContext.state.rows,
         componentContext.props.itemNameList,
         componentContext.props.priceMap
@@ -123,7 +122,7 @@ export function triggerSentItemsDataUpdates(componentContext) {
         componentContext.props.priceMap
     );
     //update the component's local variables that are mapped to the UI elements
-    updateLocalState(componentContext, updatedTotal, updatedRows);
+    updateLocalState(componentContext, updatedRows, updatedTotal);
     //update the received items in redux's global store
     componentContext.props.pushSentItemDetails(updatedRows, updatedTotal);
     //update the summary details in redux's global store
@@ -142,17 +141,28 @@ export function triggerReceivedItemsDataUpdates(componentContext) {
         componentContext.props.priceMap
     );
     //update the component's local variables that are mapped to the UI elements
-    updateLocalState(componentContext, updatedTotal, updatedRows);
+    updateLocalState(componentContext, updatedRows,updatedTotal);
     //update the received items in redux's global store
     componentContext.props.pushReceivedItemsDetail(updatedRows, updatedTotal);
     //update the summary details in redux's global store
     componentContext.props.pushTradeSummary(updatedTotal - componentContext.props.sent.total);
 }
 
-function updateLocalState(componentContext, updatedTotal, updatedRows) {
-    componentContext.setState({
-        ...componentContext.state,
-        totalPrice: updatedTotal,
-        rows: updatedRows
-    });
+function updateLocalState(componentContext, updatedRows, updatedTotal, totalPriceAfterProfit) {
+    if(totalPriceAfterProfit){
+        componentContext.setState({
+            ...componentContext.state,
+            totalAfterProfit: totalPriceAfterProfit,
+            totalPrice: updatedTotal,
+            rows: updatedRows
+        });
+    }
+    else{
+        componentContext.setState({
+            ...componentContext.state,
+            totalPrice: updatedTotal,
+            rows: updatedRows
+        });
+    }
+    
 }

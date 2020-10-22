@@ -21,7 +21,8 @@ const mainReducer = function (
     },
     sent: {
       items: [getEmptySentRow()],
-      total: 0
+      total: 0,
+      totalAfterProfit:0
     },
     tradeSummary: {
       yourName: localStorage.getItem("YOUR_NAME"),
