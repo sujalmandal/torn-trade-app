@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import App from './App';
-import { IdGenerator } from './utils/IdGeneratorUtil'
 import { populateDefaultPriceMap } from './utils/PriceMapGeneratorUtil'
+import { getEmptySentRow,getEmptyReceivedRow } from './utils/ItemRowUtil'
 import * as serviceWorker from './serviceWorker';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
@@ -16,11 +16,11 @@ const mainReducer = function (
     time: new Date(),
     apiKey: localStorage.getItem("API_KEY"),
     received: {
-      items: [{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
+      items: [getEmptyReceivedRow()],
       total: 0
     },
     sent: {
-      items: [{ id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 }],
+      items: [getEmptySentRow()],
       total: 0
     },
     tradeSummary: {

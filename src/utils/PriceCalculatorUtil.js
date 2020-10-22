@@ -19,3 +19,30 @@ export function getTotalPrice(rows,itemNamesList,priceMap){
     });
     return totalPrice;
 }
+
+export function getUpdatedRowDataWithProfit(rows,itemNamesList,priceMap){
+    return rows.map((row)=>{
+        if(itemNamesList.includes(row.name)){
+            //actual market price
+            var marketPrice=priceMap[row.name];
+            row.mPrice=marketPrice;
+            //price after taking profit
+            row.actualPrice=marketPrice-((marketPrice*row.itemProfit)/100);
+            //total price calculated with market price
+            row.tPrice=row.qty*row.mPrice;
+            //actual total price calculated after taking profit
+            row.actualTotalPrice=row.qty*row.actualPrice;
+        }
+        return {...row};
+    });
+}
+
+export function getTotalPriceWithProfit(rows,itemNamesList,priceMap){
+    var totalPrice=0;
+    rows.forEach((row)=>{
+        if(itemNamesList.includes(row.name)){
+            totalPrice+=priceMap[row.name]*row.qty;
+        }
+    });
+    return totalPrice;
+}

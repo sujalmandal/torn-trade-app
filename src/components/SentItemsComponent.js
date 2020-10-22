@@ -13,7 +13,7 @@ import {
     updateTypeAheadSelectedName,
     addRowInSentItems,
     removeRowFromSentItems,
-    updateQtyInSentItems
+    updateNumericInputInSentItems
 } from '../helpers/ItemsComponentHelper'
 
 class SentItemsComponent extends Component {
@@ -42,7 +42,7 @@ class SentItemsComponent extends Component {
                                 <th>Quantity</th>
                                 <th>Price</th>
                                 <th>Total Price</th>
-                                <th style={{width:"10%"}}>Profit</th>
+                                <th style={{width:"15%"}}>Profit %</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -53,10 +53,10 @@ class SentItemsComponent extends Component {
                                         <td>
                                             <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={refinedOptions(this.props, this.state.rows)} />
                                         </td>
-                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event) => { updateQtyInSentItems(event, this) }} min={0} /></td>
-                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
-                                        <td><Input type="number" name={"tPrice_" + row.id} value={row.tPrice} disabled={true} /></td>
-                                        <td><Input type="number" min={0} max={99} placeholder="%"></Input></td>
+                                        <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(event) => { updateNumericInputInSentItems(event, this) }} min={0} /></td>
+                                        <td><Input type="number" name={"actualPrice_" + row.id} value={row.actualPrice} disabled={true} /></td>
+                                        <td><Input type="number" name={"actualTotalPrice_" + row.id} value={row.actualTotalPrice} disabled={true} /></td>
+                                        <td><Input type="number" name={"itemProfit_" + row.id} min={0} max={99} value={row.itemProfit} placeholder="%" onChange={(event) => { updateNumericInputInSentItems(event, this)}}></Input></td>
                                         <td>
                                                 <ButtonGroup>
                                                     <Button size="sm" color="success" disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)} onClick={() => { addRowInSentItems(this) }}>+</Button>

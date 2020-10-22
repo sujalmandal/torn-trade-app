@@ -1,3 +1,5 @@
+import { IdGenerator } from './IdGeneratorUtil'
+
 export function areRowsEmpty(rows) {
     var isEmpty = false;
     rows.forEach(row => {
@@ -38,4 +40,12 @@ export function isCurrentRowEmpty(row){
 
 export function isItemListNotInitialised(props){
     return props.itemsNameList === null;
+}
+
+export function getEmptySentRow(){
+    return { id: IdGenerator(), name: "", qty: 0, itemProfit:0, mPrice: 0, tPrice: 0, actualPrice:0,actualTotalPrice:0 };
+}
+
+export function getEmptyReceivedRow(){
+    return { id: IdGenerator(), name: "", qty: 0, mPrice: 0, tPrice: 0 };
 }

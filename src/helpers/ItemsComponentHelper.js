@@ -1,5 +1,10 @@
-import { IdGenerator } from '../utils/IdGeneratorUtil'
-import { getUpdatedRowData, getTotalPrice } from '../utils/PriceCalculatorUtil'
+import { getEmptySentRow,getEmptyReceivedRow } from '../utils/ItemRowUtil'
+import { 
+    getUpdatedRowData,
+    getTotalPrice,
+    getUpdatedRowDataWithProfit,
+    getTotalPriceWithProfit
+ } from '../utils/PriceCalculatorUtil'
 
 /* methods common for both SentItemsComponent & ReceivedItemsComponent */
 
@@ -10,6 +15,15 @@ export function updateTypeAheadSelectedName(selectedItemName, rowId, componentCo
             row.name = itemName;
             row.mPrice = 0;
             row.tPrice = 0;
+            if(row.itemProfit){
+                row.itemProfit=0;
+            }
+            if(row.actualPrice){
+                row.actualPrice=0;
+            }
+            if(row.actualTotalPrice){
+                row.actualTotalPrice=0;
+            }
         }
     });
 
@@ -41,13 +55,7 @@ export function updateTypeAheadSelectedName(selectedItemName, rowId, componentCo
 /* methods exclusive to ReceivedItemsComponent */
 
 export function addRowInReceivedItems(componentContext) {
-    componentContext.state.rows.push({
-        id: IdGenerator(),
-        name: "",
-        qty: 0,
-        mPrice: 0,
-        tPrice: 0
-    })
+    componentContext.state.rows.push(getEmptyReceivedRow())
     componentContext.forceUpdate();
     triggerReceivedItemsDataUpdates(componentContext);
 }
@@ -76,13 +84,7 @@ export function updateQtyInReceivedItems(event, componentContext) {
 /* methods exclusive to SentItemsComponent */
 
 export function addRowInSentItems(componentContext) {
-    componentContext.state.rows.push({
-        id: IdGenerator(),
-        name: "",
-        qty: 0,
-        mPrice: 0,
-        tPrice: 0
-    });
+    componentContext.state.rows.push(getEmptySentRow());
     componentContext.forceUpdate();
     triggerSentItemsDataUpdates(componentContext);
 }
@@ -95,7 +97,7 @@ export function removeRowFromSentItems(currentRow, componentContext) {
     triggerSentItemsDataUpdates(componentContext);
 }
 
-export function updateQtyInSentItems(event, componentContext) {
+export function updateNumericInputInSentItems(event, componentContext) {
     var fieldName = event.target.name.split("_")[0];
     var rowId = event.target.name.split("_")[1];
     var value = event.target.value;
@@ -110,12 +112,12 @@ export function updateQtyInSentItems(event, componentContext) {
 
 //updates
 export function triggerSentItemsDataUpdates(componentContext) {
-    var updatedTotal = getTotalPrice(
+    var updatedTotal = getTotalPriceWithProfit(
         componentContext.state.rows,
         componentContext.props.itemNameList,
         componentContext.props.priceMap
     );
-    var updatedRows = getUpdatedRowData(
+    var updatedRows = getUpdatedRowDataWithProfit(
         componentContext.state.rows,
         componentContext.props.itemNameList,
         componentContext.props.priceMap
