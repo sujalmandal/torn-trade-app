@@ -18,11 +18,13 @@ const mainReducer = function (
     received: {
       items: [getEmptyReceivedRow()],
       total: 0,
-      totalActualPrice: 0
+      totalActualPrice: 0,
+      cash: 0
     },
     sent: {
       items: [getEmptySentRow()],
-      total: 0
+      total: 0,
+      cash: 0
     },
     tradeSummary: {
       yourName: localStorage.getItem("YOUR_NAME"),

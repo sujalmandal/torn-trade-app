@@ -3,27 +3,28 @@
 import React, { Component } from "react"
 import { connect } from 'react-redux';
 /* UI element imports */
-import { Input, Row, Col, Table, Button, ButtonGroup } from "reactstrap"
+import { Input, Row, Col, Table, Button, ButtonGroup, InputGroup, InputGroupAddon, InputGroupText } from "reactstrap"
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
 import { fetchPrice } from '../actions/MarketPriceFetchAction'
-import { 
-    isCurrentRowEmpty, 
-    isItemListNotInitialised, 
+import {
+    isCurrentRowEmpty,
+    isItemListNotInitialised,
     refinedOptions,
-    getFormattedCurrency 
+    getFormattedCurrency
 } from '../utils/ItemRowUtil'
 import {
     updateTypeAheadSelectedName,
     addRowInReceivedItems,
     removeRowFromReceivedItems,
-    updateNumericInputInReceivedItems
+    updateNumericInputInReceivedItems,
+    updateCash
 } from '../helpers/ItemsComponentHelper'
 
 class ReceivedItemsComponent extends Component {
 
-    
+
 
     constructor(props) {
         super(props);
@@ -31,6 +32,7 @@ class ReceivedItemsComponent extends Component {
             totalPrice: this.props.received.total,
             totalActualPrice: this.props.received.totalActualPrice,
             rows: this.props.received.items,
+            cash : 0,
             forceRecalculation: false,
             type: "RECEIVED"
         }
@@ -44,15 +46,15 @@ class ReceivedItemsComponent extends Component {
                     &nbsp;<h5>Received</h5>
                 </Row>
                 <Row>
-                    <Table id="receivedListTable" size="sm">
+                    <Table id="receivedListTable" borderless size="sm">
                         <thead>
-                            <tr style={{"fontSize":"0.85rem"}}>
+                            <tr style={{ "fontSize": "0.85rem" }}>
                                 <th>Item name</th>
-                                <th style={{width:"12%"}}>Qty</th>
+                                <th style={{ width: "12%" }}>Qty</th>
                                 <th>Market Price</th>
                                 <th>Your Price</th>
                                 <th>Total</th>
-                                <th style={{width:"10%"}}>Profit %</th>
+                                <th style={{ width: "12%" }}>Profit %</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -64,10 +66,10 @@ class ReceivedItemsComponent extends Component {
                                             <Typeahead id={"name_" + row.id} maxResults={5} disabled={this.props.itemNameList === null} onChange={(selected) => { updateTypeAheadSelectedName(selected, row.id, this) }} options={refinedOptions(this.props, this.state.rows)} />
                                         </td>
                                         <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(e) => { updateNumericInputInReceivedItems(e, this) }} min={0} /></td>
-                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true}/></td>
-                                        <td><Input type="number" name={"actualPrice_" + row.id} value={row.actualPrice} onChange={(e) => { updateNumericInputInReceivedItems(e, this) }} max={row.mPrice}/></td>
-                                        <td><Input type="number" name={"actualTotalPrice_" + row.id} value={row.actualTotalPrice} disabled={true}/></td>
-                                        <td><Input type="number" name={"profitPercent_" + row.id} value={row.profitPercent} onChange={(e)=>{updateNumericInputInReceivedItems(e,this)}} /></td>
+                                        <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true} /></td>
+                                        <td><Input type="number" name={"actualPrice_" + row.id} value={row.actualPrice} onChange={(e) => { updateNumericInputInReceivedItems(e, this) }} max={row.mPrice} disabled={isCurrentRowEmpty(row) || isItemListNotInitialised(this.props)}/></td>
+                                        <td><Input type="number" name={"actualTotalPrice_" + row.id} value={row.actualTotalPrice} disabled={true} /></td>
+                                        <td><Input type="number" name={"profitPercent_" + row.id} value={row.profitPercent} onChange={(e) => { updateNumericInputInReceivedItems(e, this) }} /></td>
                                         <td>
                                             <div>
                                                 <ButtonGroup>
@@ -82,9 +84,21 @@ class ReceivedItemsComponent extends Component {
                         </tbody>
                     </Table>
                 </Row>
+                <hr/>
                 <Row>
-                    <Col>Total market price: {getFormattedCurrency(this.state.totalPrice)}</Col>
-                    <Col>Total price after profits: {getFormattedCurrency(this.state.totalActualPrice)}</Col>
+                    <Col>Total <b>market price</b> received: {getFormattedCurrency(this.state.totalPrice)}</Col>
+                    <Col>Total price at <b>your rate</b>: {getFormattedCurrency(this.state.totalActualPrice)}</Col>
+                </Row>
+                <hr/>
+                <Row>
+                    <Col xs="5">
+                        <InputGroup>
+                            <InputGroupAddon addonType="prepend">
+                                <InputGroupText style={{ "fontSize": ".80rem" }}>$ received</InputGroupText>
+                            </InputGroupAddon>
+                            <Input type="number" value={this.state.cash} onChange={(e)=>{ updateCash(this, e.target.value)}}/>
+                        </InputGroup>
+                    </Col>
                 </Row>
             </>
         )
@@ -114,13 +128,14 @@ const mapDispatchToProps = dispatch => {
             dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, false, updatesCallback));
         },
 
-        pushReceivedItemsDetail: (items, totalPrice, totalActualPrice) => {
+        pushReceivedItemsDetail: (items, totalPrice, totalActualPrice, cashReceived) => {
             dispatch({
                 type: 'UPDATE_RECEIVED_ITEMS', payload: {
                     received: {
                         items: items,
                         total: totalPrice,
-                        totalActualPrice: totalActualPrice
+                        totalActualPrice: totalActualPrice,
+                        cash : cashReceived
                     }
                 }
             });

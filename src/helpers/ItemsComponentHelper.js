@@ -1,12 +1,27 @@
-import { getEmptySentRow,getEmptyReceivedRow } from '../utils/ItemRowUtil'
-import { 
+import { getEmptySentRow, getEmptyReceivedRow } from '../utils/ItemRowUtil'
+import {
     getUpdatedRowData,
     getTotalPrice,
     getTotalPriceWithProfit,
     getUpdatedRowDataWithProfit,
- } from '../utils/PriceCalculatorUtil'
+} from '../utils/PriceCalculatorUtil'
 
 /* methods common for both SentItemsComponent & ReceivedItemsComponent */
+
+
+export function updateCash(componentContext, cashValue) {
+    componentContext.setState({
+        ...componentContext.state,
+        cash: parseInt(cashValue)
+    }, () => {
+        if (componentContext.state.type === "RECEIVED") {
+            triggerReceivedItemsDataUpdates(componentContext);
+        }
+        if (componentContext.state.type === "SENT") {
+            triggerSentItemsDataUpdates(componentContext);
+        }
+    });
+}
 
 export function updateTypeAheadSelectedName(selectedItemName, rowId, componentContext) {
     var itemName = selectedItemName[0];
@@ -15,14 +30,14 @@ export function updateTypeAheadSelectedName(selectedItemName, rowId, componentCo
             row.name = itemName;
             row.mPrice = 0;
             row.tPrice = 0;
-            if(row.itemProfit){
-                row.itemProfit=0;
+            if (row.itemProfit) {
+                row.itemProfit = 0;
             }
-            if(row.actualPrice){
-                row.actualPrice=0;
+            if (row.actualPrice) {
+                row.actualPrice = 0;
             }
-            if(row.actualTotalPrice){
-                row.actualTotalPrice=0;
+            if (row.actualTotalPrice) {
+                row.actualTotalPrice = 0;
             }
         }
     });
@@ -55,7 +70,7 @@ export function updateTypeAheadSelectedName(selectedItemName, rowId, componentCo
 /* methods exclusive to ReceivedItemsComponent */
 
 export function addRowInReceivedItems(componentContext) {
-    componentContext.state.rows.push(getEmptyReceivedRow())
+    componentContext.state.rows.push(getEmptyReceivedRow());
     componentContext.forceUpdate();
     triggerReceivedItemsDataUpdates(componentContext);
 }
@@ -72,13 +87,14 @@ export function updateNumericInputInReceivedItems(event, componentContext) {
     var fieldName = event.target.name.split("_")[0];
     var rowId = event.target.name.split("_")[1];
     var value = event.target.value;
+    value = value === 0 ? 0 : value;
     componentContext.state.rows.forEach((row) => {
         if (row.id === rowId) {
             row[fieldName] = value;
         }
     });
     componentContext.forceUpdate();
-    triggerReceivedItemsDataUpdates(componentContext,fieldName);
+    triggerReceivedItemsDataUpdates(componentContext, fieldName);
 }
 
 /* methods exclusive to SentItemsComponent */
@@ -101,6 +117,7 @@ export function updateNumericInputInSentItems(event, componentContext) {
     var fieldName = event.target.name.split("_")[0];
     var rowId = event.target.name.split("_")[1];
     var value = event.target.value;
+    value = value === 0 ? 0 : value;
     componentContext.state.rows.forEach((row) => {
         if (row.id === rowId) {
             row[fieldName] = value;
@@ -112,6 +129,7 @@ export function updateNumericInputInSentItems(event, componentContext) {
 
 //updates
 export function triggerSentItemsDataUpdates(componentContext) {
+    var cashSentCash = parseInt(componentContext.state.cash === 0 || isNaN(componentContext.state.cash) ? 0 : componentContext.state.cash);
     var updatedTotal = getTotalPrice(
         componentContext.state.rows,
         componentContext.props.itemNameList,
@@ -125,12 +143,15 @@ export function triggerSentItemsDataUpdates(componentContext) {
     //update the component's local variables that are mapped to the UI elements
     updateLocalState(componentContext, updatedRows, updatedTotal);
     //update the received items in redux's global store
-    componentContext.props.pushSentItemDetails(updatedRows, updatedTotal);
+    componentContext.props.pushSentItemDetails(updatedRows, updatedTotal, cashSentCash);
     //update the summary details in redux's global store
-    componentContext.props.pushTradeSummary(componentContext.props.received.totalActualPrice - updatedTotal);
+    var totalValueOfCashAndItemsSent = cashSentCash + parseInt(updatedTotal);
+    var totalValueOfCashAndItemsReceived = parseInt(componentContext.props.received.totalActualPrice) + parseInt(componentContext.props.received.cash);
+    componentContext.props.pushTradeSummary(totalValueOfCashAndItemsReceived - totalValueOfCashAndItemsSent);
 }
 
 export function triggerReceivedItemsDataUpdates(componentContext, changedFieldName) {
+    var cashReceivedCash = componentContext.state.cash === 0 || isNaN(componentContext.state.cash) ? 0 : componentContext.state.cash;
     var updatedTotal = getTotalPrice(
         componentContext.state.rows,
         componentContext.props.itemNameList,
@@ -149,15 +170,17 @@ export function triggerReceivedItemsDataUpdates(componentContext, changedFieldNa
         changedFieldName
     );
     //update the component's local variables that are mapped to the UI elements
-    updateLocalState(componentContext, updatedRows,updatedTotal, updatedTotalActual);
+    updateLocalState(componentContext, updatedRows, updatedTotal, updatedTotalActual);
     //update the received items in redux's global store
-    componentContext.props.pushReceivedItemsDetail(updatedRows, updatedTotal, updatedTotalActual);
+    componentContext.props.pushReceivedItemsDetail(updatedRows, updatedTotal, updatedTotalActual, cashReceivedCash);
     //update the summary details in redux's global store
-    componentContext.props.pushTradeSummary(updatedTotalActual - componentContext.props.sent.total);
+    var totalValueOfCashAndItemsReceived = parseInt(updatedTotalActual) + cashReceivedCash;
+    var totalValueOfCashAndItemsSent = parseInt(componentContext.props.sent.total) + parseInt(componentContext.props.sent.cash);
+    componentContext.props.pushTradeSummary(totalValueOfCashAndItemsReceived - totalValueOfCashAndItemsSent);
 }
 
 function updateLocalState(componentContext, updatedRows, updatedTotal, totalPriceAfterProfit) {
-    if(totalPriceAfterProfit){
+    if (totalPriceAfterProfit) {
         componentContext.setState({
             ...componentContext.state,
             totalActualPrice: totalPriceAfterProfit,
@@ -165,12 +188,11 @@ function updateLocalState(componentContext, updatedRows, updatedTotal, totalPric
             rows: updatedRows
         });
     }
-    else{
+    else {
         componentContext.setState({
             ...componentContext.state,
             totalPrice: updatedTotal,
             rows: updatedRows
         });
     }
-    
 }

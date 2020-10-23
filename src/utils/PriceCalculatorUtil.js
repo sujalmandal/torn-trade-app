@@ -15,7 +15,7 @@ export function getTotalPrice(rows,itemNamesList,priceMap){
     var totalPrice=0;
     rows.forEach((row)=>{
         if(itemNamesList.includes(row.name)){
-            totalPrice+=priceMap[row.name]*row.qty;
+            totalPrice+=parseInt(priceMap[row.name])*row.qty;
         }
     });
     return totalPrice;
@@ -47,12 +47,12 @@ export function getTotalPriceWithProfit(rows,itemNamesList,priceMap,changedField
     var totalPriceAfterProfit=0;
     rows.forEach((row)=>{
         if(itemNamesList.includes(row.name)){
-            var marketPrice=priceMap[row.name];
+            var marketPrice=parseInt(priceMap[row.name]);
             if(changedFieldName && changedFieldName.includes("actualPrice")){
                 totalPriceAfterProfit+=row.actualPrice*row.qty;
             }
             else{
-                totalPriceAfterProfit+=marketPrice-((marketPrice*(row.profitPercent)/100))*row.qty;
+                totalPriceAfterProfit+=(marketPrice-((marketPrice*(row.profitPercent)/100)))*row.qty;
             }
         }
     });

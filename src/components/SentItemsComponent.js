@@ -3,7 +3,7 @@
 import React, { Component } from "react"
 import { connect } from 'react-redux';
 /* UI element imports */
-import { Input, Row, Col, Table, Button, ButtonGroup } from "reactstrap"
+import { Input, Row, Col, Table, Button, ButtonGroup, InputGroup, InputGroupAddon, InputGroupText } from "reactstrap"
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* custom import */
@@ -17,7 +17,8 @@ import {
     updateTypeAheadSelectedName,
     addRowInSentItems,
     removeRowFromSentItems,
-    updateNumericInputInSentItems
+    updateNumericInputInSentItems,
+    updateCash
 } from '../helpers/ItemsComponentHelper'
 
 class SentItemsComponent extends Component {
@@ -28,6 +29,7 @@ class SentItemsComponent extends Component {
             totalPrice: this.props.sent.total,
             rows: this.props.sent.items,
             forceRecalculation: false,
+            cash : 0,
             type: "SENT"
         }
         props.updateContextInReduxStore(this);
@@ -40,7 +42,7 @@ class SentItemsComponent extends Component {
                 &nbsp;<h5>Sent</h5>
                 </Row>
                 <Row>
-                    <Table id="sentListTable" size="sm">
+                    <Table id="sentListTable" borderless size="sm">
                         <thead>
                         <tr style={{"fontSize":"0.85rem"}}>
                                 <th>Item name</th>
@@ -71,9 +73,22 @@ class SentItemsComponent extends Component {
                         </tbody>
                     </Table>
                 </Row>
+                <hr/>
                 <Row>
-                    <Col>Total market price of items sent: {getFormattedCurrency(this.state.totalPrice)}</Col>
+                    <Col>Total <b>market price</b> of items: {getFormattedCurrency(this.state.totalPrice)}</Col>
                 </Row>
+                <hr/>
+                <Row>
+                    <Col xs="6">
+                        <InputGroup>
+                            <InputGroupAddon addonType="prepend">
+                                <InputGroupText style={{ "fontSize": ".80rem" }}>$ sent</InputGroupText>
+                            </InputGroupAddon>
+                            <Input type="number" value={this.state.cash} onChange={(e)=>{ updateCash(this, e.target.value)}}/>
+                        </InputGroup>
+                    </Col>
+                </Row>
+ 
             </>
         )
     }
@@ -101,12 +116,13 @@ const mapDispatchToProps = dispatch => {
             dispatch(fetchPrice(apiKey, itemName, itemsStore, componentContext, false, updatesCallback));
         },
 
-        pushSentItemDetails: (items, totalPrice) => {
+        pushSentItemDetails: (items, totalPrice,cashSent) => {
             dispatch({
                 type: 'UPDATE_SENT_ITEMS', payload: {
                     sent: {
                         items: items,
-                        total: totalPrice
+                        total: totalPrice,
+                        cash : cashSent
                     }
                 }
             });

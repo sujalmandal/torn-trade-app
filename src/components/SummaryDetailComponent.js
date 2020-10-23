@@ -101,7 +101,9 @@ class SummaryDetailComponent extends Component {
                                                     <span style={{ "textDecoration": "underline" }}>
                                                         {this.props.tradeSummary.yourName}
                                                         {" received the following items, "}
-                                                        {"worth " + getFormattedCurrency(this.props.received.totalActualPrice) + " in total"}
+                                                        {"worth " }
+                                                        <span style={{ "color": "green" }}>{getFormattedCurrency(this.props.received.totalActualPrice)}</span>
+                                                        {" in total"}
                                                     </span>
                                                     <br />
                                                 </div>
@@ -117,6 +119,7 @@ class SummaryDetailComponent extends Component {
                                                             {" in total"}<br />
                                                         </span>
                                                     })}
+                                                    <span style={{ "color": "green","fontWeight": "bold" }}>{this.props.received.cash!==0?this.props.tradeSummary.yourName+" also received "+getFormattedCurrency(this.props.received.cash)+" in cash":""}</span>
                                                 </div>
                                                 <span><br /></span>
 
@@ -124,7 +127,9 @@ class SummaryDetailComponent extends Component {
                                                     <span style={{ "textDecoration": "underline" }}>
                                                         {this.props.tradeSummary.yourName}
                                                         {" sent the following items, "}
-                                                        {"worth " + getFormattedCurrency(this.props.sent.total) + " in total"}
+                                                        {"worth "}
+                                                        <span style={{ "color": "green" }}>{getFormattedCurrency(this.props.sent.total)}</span>
+                                                        {" in total"}
                                                     </span>
                                                     <br />
                                                 </div>
@@ -140,6 +145,7 @@ class SummaryDetailComponent extends Component {
                                                             {" in total"}<br />
                                                         </span>
                                                     })}
+                                                    <span style={{ "color": "green","fontWeight": "bold" }}>{this.props.sent.cash!==0?this.props.tradeSummary.yourName+" also sent "+getFormattedCurrency(this.props.sent.cash)+" in cash":""}</span>
                                                 </div>
                                                 <span>----------------</span><br/>
                                                 <span style={{ "fontWeight": "bold" }}>{balanceText}</span>
