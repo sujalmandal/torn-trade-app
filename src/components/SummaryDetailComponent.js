@@ -111,9 +111,9 @@ class SummaryDetailComponent extends Component {
                                                             <span style={{ "fontWeight": "bold" }}>{row.name}</span>
                                                             <span style={{ "color": "blue" }}>{" x" + row.qty}</span>
                                                             {" at "}
-                                                            <span style={{ "color": "green" }}>{getFormattedCurrency(row.mPrice)}</span>
+                                                            <span style={{ "color": "green" }}>{getFormattedCurrency(row.actualPrice)}</span>
                                                             {"  each, "}
-                                                            <span style={{ "color": "green" }}>{getFormattedCurrency(row.tPrice)}</span>
+                                                            <span style={{ "color": "green" }}>{getFormattedCurrency(row.actualTotalPrice)}</span>
                                                             {" in total"}<br />
                                                         </span>
                                                     })}
