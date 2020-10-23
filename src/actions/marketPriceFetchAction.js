@@ -4,16 +4,14 @@ import debugConsole from '../utils/ConsoleUtil'
 export const fetchPrice = (apiKey, itemName, itemsStore, componentContext, forceApiCall, updatesCallback) => {
   return (dispatch) => {
     var itemId = itemsStore.idByName[itemName];
-    var itemPriceUrl = "https://api.torn.com/market/" + itemId + "?selections=itemmarket&key=" + apiKey;
-    var bazaarPriceUrl = "https://api.torn.com/market/" + itemId + "?selections=bazaar&key=" + apiKey;
+    var itemPriceUrl = "https://api.torn.com/market/" + itemId + "?selections=itemmarket,bazaar&key=" + apiKey;
     var cachedBestPriceForItem = componentContext.props.priceMap[itemName];
     if (cachedBestPriceForItem === 0 || forceApiCall) {
       debugConsole("prices to be fetched from the API");
       var itemPricePromise = axios.get(itemPriceUrl);
-      var bazaarPricePromise = axios.get(bazaarPriceUrl);
-      Promise.all([itemPricePromise, bazaarPricePromise]).then((responses) => {
-        var itemMarketListings = responses[0].data.itemmarket;
-        var privateBazaarListings = responses[1].data.bazaar;
+      itemPricePromise.then((response) => {
+        var itemMarketListings = response.data.itemmarket;
+        var privateBazaarListings = response.data.bazaar;
         var bestPriceAvailable = 0;
         var bestItemMarketPrice = 0;
         var bestPrivateBazaarPrice = 0;
@@ -29,11 +27,9 @@ export const fetchPrice = (apiKey, itemName, itemsStore, componentContext, force
 
         pushPriceAndRowDetailsInReduxStore(itemName, bestPriceAvailable, dispatch, updatesCallback);
 
-      }).catch((errs) => {
-        console.error(JSON.stringify(errs));
-        errs.forEach(err => {
-          dispatch(failed(err));
-        });
+      }).catch((err) => {
+        console.error(JSON.stringify(err));
+        dispatch(failed(err));
       });
     }
     else {

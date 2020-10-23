@@ -78,7 +78,7 @@ export function updateNumericInputInReceivedItems(event, componentContext) {
         }
     });
     componentContext.forceUpdate();
-    triggerReceivedItemsDataUpdates(componentContext);
+    triggerReceivedItemsDataUpdates(componentContext,fieldName);
 }
 
 /* methods exclusive to SentItemsComponent */
@@ -130,7 +130,7 @@ export function triggerSentItemsDataUpdates(componentContext) {
     componentContext.props.pushTradeSummary(componentContext.props.received.totalActualPrice - updatedTotal);
 }
 
-export function triggerReceivedItemsDataUpdates(componentContext) {
+export function triggerReceivedItemsDataUpdates(componentContext, changedFieldName) {
     var updatedTotal = getTotalPrice(
         componentContext.state.rows,
         componentContext.props.itemNameList,
@@ -139,12 +139,14 @@ export function triggerReceivedItemsDataUpdates(componentContext) {
     var updatedTotalActual = getTotalPriceWithProfit(
         componentContext.state.rows,
         componentContext.props.itemNameList,
-        componentContext.props.priceMap
+        componentContext.props.priceMap,
+        changedFieldName
     );
     var updatedRows = getUpdatedRowDataWithProfit(
         componentContext.state.rows,
         componentContext.props.itemNameList,
-        componentContext.props.priceMap
+        componentContext.props.priceMap,
+        changedFieldName
     );
     //update the component's local variables that are mapped to the UI elements
     updateLocalState(componentContext, updatedRows,updatedTotal, updatedTotalActual);

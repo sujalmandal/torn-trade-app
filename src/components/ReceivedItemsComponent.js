@@ -65,7 +65,7 @@ class ReceivedItemsComponent extends Component {
                                         </td>
                                         <td><Input type="number" disabled={this.props.itemNameList === null} name={"qty_" + row.id} value={row.qty} onChange={(e) => { updateNumericInputInReceivedItems(e, this) }} min={0} /></td>
                                         <td><Input type="number" name={"mPrice_" + row.id} value={row.mPrice} disabled={true}/></td>
-                                        <td><Input type="number" name={"actualPrice_" + row.id} value={row.actualPrice} disabled={true}/></td>
+                                        <td><Input type="number" name={"actualPrice_" + row.id} value={row.actualPrice} onChange={(e) => { updateNumericInputInReceivedItems(e, this) }} max={row.mPrice}/></td>
                                         <td><Input type="number" name={"actualTotalPrice_" + row.id} value={row.actualTotalPrice} disabled={true}/></td>
                                         <td><Input type="number" name={"profitPercent_" + row.id} value={row.profitPercent} onChange={(e)=>{updateNumericInputInReceivedItems(e,this)}} /></td>
                                         <td>
